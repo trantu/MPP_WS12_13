@@ -127,6 +127,56 @@ Stellen Sie eine Liste der Operatoren zur Bitmanipulation auf.
  mehrerer Portleitungen eines Ports am Beispiel von P4OUT.
 \end_layout
 
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#define BIT_SET(a,b) ((a) |= (b))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_CLR(a,b) ((a) &= ~(b))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_TOGGLE(a,b) ((a) ^= (b))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+a
+\family default
+ ist das Bitfeld und 
+\family typewriter
+b
+\family default
+ welches bit (oder welche Bits) wir ändern wollen.
+ Für P4OUT wäre a=P4OUT und b welcher Pin.
+ Wen man P4.X ändern will, gibt man den Wert 
+\begin_inset Formula $2^{X}$
+\end_inset
+
+ was den Bit an der X-te Stelle setzt.
+ Zum setzen, machen wir ein bitwise-OR der Werte, so dass der Bit, was b
+ repräsentiert, gesetzt wird (und alle andere Werte bleiben gleich).
+ Zum Rücksetzen negieren wir den Wert, so dass alle außer das X-te Bit Null
+ sind.
+ Das bitwise-AND sorgt dafür, dass alle Bits außer das X-te, die vorher
+ gesetzt waren, so bleiben.Zum Toggeln benutzen wir eine XOR-Operation.
+ Wo das Bit 0 ist, bleibt der Wert konstant, wo es 1 ist, wird's geändert.
+\end_layout
+
 \begin_layout Subsubsection
 Erläutern Sie anhand der Abbildung der inneren Struktur einer Portleitung
  für die folgenden Registerbelegungen den Signalpfad und den Logikpegel
@@ -180,7 +230,10 @@ Warum leuchtet eine LED am Port P4.0, wenn der Logikpegel "0" ist und nicht
 \end_layout
 
 \begin_layout Standard
-//
+Die Pegeln sind am positivem Pegel des LEDs angeschlossen.
+ Wenn der Pegel auf high ist, gibt es kein Potenzialdifferenz, also leuchtet
+ die LED nicht.
+ Ist der Pegel low, dann darf der Strom fließen.
 \end_layout
 
 \begin_layout Subsubsection
