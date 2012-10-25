@@ -479,5 +479,69 @@ while(1){
 
 \end_layout
 
+\begin_layout Subsection
+Input
+\end_layout
+
+\begin_layout Subsubsection
+Erläutern Sie unter Nutzung des User's Guide die Funktionalität der sieben
+ Register:
+\end_layout
+
+\begin_layout Itemize
+P1DIR: wählt die Richtung für den Pin (0
+\begin_inset Formula $\iff$
+\end_inset
+
+input oder 1 
+\begin_inset Formula $\iff$
+\end_inset
+
+ output)
+\end_layout
+
+\begin_layout Itemize
+P1IN: repräsentiert den Wert der Eingabe (0 low, 1 high)
+\end_layout
+
+\begin_layout Itemize
+P1OUT: setzt den Wert für den Output (0 
+\begin_inset Formula $\iff$
+\end_inset
+
+low oder 1 
+\begin_inset Formula $\iff$
+\end_inset
+
+high)
+\end_layout
+
+\begin_layout Itemize
+P1SEL: wird zwischen I/O Funktion und peripherellem Modul.
+ Wenn dies auf 1 gesetzt ist, ist die Interrupt-Funktion dieses Ports aus.
+\end_layout
+
+\begin_layout Itemize
+P1IE: aktiviert die P1IFG 
+\begin_inset Quotes eld
+\end_inset
+
+interrupt flag
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+P1IES: wählt die Interrupt-Flanke der Pins aus.
+\end_layout
+
+\begin_layout Itemize
+P1IFG: jedes P1IFGX bit ist die Interrupt-Flag des Pins.
+ Es wird gesetzt, wenn die ausgewählte Flanke beim Eingangssignal des Pins
+ gibt.
+\end_layout
+
 \end_body
 \end_document
