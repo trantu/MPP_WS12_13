@@ -543,5 +543,240 @@ P1IFG: jedes P1IFGX bit ist die Interrupt-Flag des Pins.
  gibt.
 \end_layout
 
+\begin_layout Subsubsection
+Erläutern Sie die Funktion des Operators AND zur Bitmanipulation.
+ Diskutieren Sie die Einsatzmöglichkeit folgender Schreibweisen:
+\end_layout
+
+\begin_layout Standard
+Das bitwise-AND ermöglicht die logische Verknüpfung der einzelnen Bits.
+ Dies erlabut auch das Überprüfen, ob einzelne Bits gesetzt sind.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+#define T_links (0x01)
+\end_layout
+
+\begin_layout Plain Layout
+
+#define Taster (T_links)
+\end_layout
+
+\begin_layout Plain Layout
+
+#define Taste_links (P1IN & T_links)
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+if (P1IN & Taster) {...}
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+if (Taste_links) {...}
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Mit 
+\family typewriter
+Taste_links
+\family default
+ ist die Bedeutung fest, aber mit 
+\family typewriter
+P1IN & Taster
+\family default
+ kann die Definition geändert werden, falls uns eine andere Taste interessiert.
+ Dies ist beim Testen sehr nützlich.
+\end_layout
+
+\begin_layout Subsubsection
+Nutzen Sie die obere Schaltung zur Erklärung der nachfolgend dargestellten
+ Befehls- zeilen und geben Sie an, welchen Wert die Variable a (unsigned
+ char) in den einzelnen Zeilen annimmt.
+ Beachten sie dabei den Tastenzustand im Kommentar.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+#define Taster_rechts (0x02)
+\end_layout
+
+\begin_layout Plain Layout
+
+#define Taster_links (0x01)
+\end_layout
+
+\begin_layout Plain Layout
+
+P1DIR = 0x00; // alle Pins in P1 für Input gesetzt
+\end_layout
+
+\begin_layout Plain Layout
+
+P4DIR = 0x07; // P4.0, P4.1 und P4.2 für Output gesetzt
+\end_layout
+
+\begin_layout Plain Layout
+
+P4OUT = 0; // Alle drei LEDs an
+\end_layout
+
+\begin_layout Plain Layout
+
+a = 7; // Bitfolge 0000111
+\end_layout
+
+\begin_layout Plain Layout
+
+P4OUT = a; // Alle drei LEDs aus
+\end_layout
+
+\begin_layout Plain Layout
+
+a = P1IN & 0x00;    // beide Tasten gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// a = 0
+\end_layout
+
+\begin_layout Plain Layout
+
+a = P1IN & 0x03;    // beide Tasten gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// a = 3 = b00000011
+\end_layout
+
+\begin_layout Plain Layout
+
+a = P1IN & 0x01;    // Taste rechts gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// a = 0
+\end_layout
+
+\begin_layout Plain Layout
+
+a = P1IN & 0x01;    // Taste links  gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// a = 1
+\end_layout
+
+\begin_layout Plain Layout
+
+a = P1IN & 0x02;    // Taste rechts gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// a = 2 = b00000010
+\end_layout
+
+\begin_layout Plain Layout
+
+a = P1IN & 0x02;    // Taste links  gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// a = 0
+\end_layout
+
+\begin_layout Plain Layout
+
+P4OUT = P1IN & Taster_rechts;   // Taster rechts nicht gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// P4OUT = 0, alle LEDs an
+\end_layout
+
+\begin_layout Plain Layout
+
+P4OUT = P1IN & Taster_rechts;   // Taster rechts gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// P4OUT = 0x02 = b010, gelbe LED aus, andere an
+\end_layout
+
+\begin_layout Plain Layout
+
+P4OUT = P1IN & Taster_links;    // Taster links nicht gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// P4OUT = 0, alle LEDs an
+\end_layout
+
+\begin_layout Plain Layout
+
+P4OUT = P1IN & Taster_links;    // Taster links gedrückt
+\end_layout
+
+\begin_layout Plain Layout
+
+// P4OUT = 0x1 = b01, rote LED aus, andere an
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
