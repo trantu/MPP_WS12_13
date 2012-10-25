@@ -323,5 +323,165 @@ P4OUT ^= LEDRT; // P4.0 auf high, P4.0 bis P4.3 sind high
 
 \end_layout
 
+\begin_layout Subsubsection
+Schreiben Sie ein kleines Programm, welches den Durchlauf einer Sequenz
+ eines Ampelsignals mit den Phasen (Rot, Rot-Gelb, Grün, Gelb, Rot) simuliert.
+ Nutzen Sie dazu die bereitgestellte Funktion wait() für eine Zeitschleife.
+ Benutzen Sie eigene Macros und Operatoren zur Bitmanipulation.
+ Beachten Sie dabei bitte, daß nur auf Basis von Bitmanipulationen die Leitungen
+ P4.0 bis P4.2 verändert werden.
+ Alle anderen Leitung müssen was die Richtung und den Zustand anbelangt
+ unverändert bleiben.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#define BIT_SET(a,b) ((a) |= (b))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_CLR(a,b) ((a) &= ~(b))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_TOGGLE(a,b) ((a) ^= (b))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ROT (0x01)   // 0 0 1
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_GELB (0x02)  // 0 1 0
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_GRUEN (0x04) // 1 0 0
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// LEDs werden an, wenn das Bit nicht gesetzt ist, dies macht es einfahcer
+ zu lesen
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ON(led) (BIT_CLR(P4OUT, led))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_OFF(led) (BIT_SET(P4OUT, led))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_TOGGLE(led) (BIT_TOGGLE(P4OUT, led))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP() (wait(65000))
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		// Fange von bekannten Zustand an
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GELB | LED_GRUEN | LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP();
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP();
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GELB | LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP();
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP();
+\end_layout
+
+\begin_layout Plain Layout
+
+}	// Ende der Endlosschleife
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
