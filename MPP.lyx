@@ -778,5 +778,827 @@ P4OUT = P1IN & Taster_links;    // Taster links gedrückt
 
 \end_layout
 
+\begin_layout Subsubsection
+Schreiben Sie ein Programm mit folgender Funktionalität:
+\end_layout
+
+\begin_layout Itemize
+gelbe LED (P4.1) an, wenn keine Taste gedrückt ist
+\end_layout
+
+\begin_layout Itemize
+grüne LED (P4.2) an, wenn rechte Taste gedrückt und linke Taste nicht gedrückt
+ ist
+\end_layout
+
+\begin_layout Itemize
+rote LED (P4.0) an, wenn linke Taste gedrückt und rechte Taste nicht gedrückt
+ ist
+\end_layout
+
+\begin_layout Itemize
+gelbe LED (P4.1) an, wenn beide Tasten gedrückt sind
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Diese Werte haben den Index des Wertes von P1IN & (TASTE_LINKS | TASTE_RECHTS
+) */
+\end_layout
+
+\begin_layout Plain Layout
+
+static unsigned char led_settings[] = {
+\end_layout
+
+\begin_layout Plain Layout
+
+	5, // 1 0 1
+\end_layout
+
+\begin_layout Plain Layout
+
+	6, // 1 1 0
+\end_layout
+
+\begin_layout Plain Layout
+
+	3, // 0 1 1
+\end_layout
+
+\begin_layout Plain Layout
+
+	5, // 1 0 1
+\end_layout
+
+\begin_layout Plain Layout
+
+};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+P1DIR = 0x00;
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		P4OUT = led_settings[P1IN & (TASTE_LINKS | TASTE_RECHTS)];
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Ampelsteuerung
+\end_layout
+
+\begin_layout Subsubsection
+Nutzen Sie alle drei LED und den linken Taster (P1.0), um eine Fußgängerampel
+ (aus der Sichtweise des Autofahrers) zu programmieren.
+ Folgender Ablauf soll dabei realisiert werden:
+\end_layout
+
+\begin_layout Itemize
+Grundzustand alle LED aus
+\end_layout
+
+\begin_layout Itemize
+Wenn Taste gedrückt wird, sofort gelbe LED (P4.1) einschalten
+\end_layout
+
+\begin_layout Itemize
+Danach zeitverzögert gelbe LED aus und rote LED (P4.0) an
+\end_layout
+
+\begin_layout Itemize
+Nach einer Pause gelbe LED (P4.1) zur roten LED (P4.0) dazuschalten
+\end_layout
+
+\begin_layout Itemize
+Dann zeitverzögert nur die grüne LED (P4.2) einschalten
+\end_layout
+
+\begin_layout Itemize
+Nach einer weiteren Pause alle LEDs ausschalten
+\end_layout
+
+\begin_layout Itemize
+Erst danach mit einer größeren Wartezeit die Taste wieder abfragen
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#define SLEEP_QUANTUM 10000
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP(n) do { 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	long time = n * 100000; /* wait() sleeps 10*n microseconds */ 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(time > SLEEP_QUANTUM) { 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		wait(SLEEP_QUANTUM); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		time -= SLEEP_QUANTUM; 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	} 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	wait(time); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+} while(0)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ROT | LED_GELB | LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		while (!(P1IN & TASTE_LINKS)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			; // Cycles verschwenden FTW
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		// Wenn die Taste gedrueckt wird
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(2);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(3);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_ROT | LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(4);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(5);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Tastenstatus Abfrage
+\end_layout
+
+\begin_layout Subsubsection
+Entwickeln Sie ein Programm das die Tastenbetätigungen auswertet und folgender
+ Funktionsbeschreibung entspricht:
+\end_layout
+
+\begin_layout Itemize
+Eine unsigned char Variable soll als Basis für diese Aufgabe genutzt werden
+\end_layout
+
+\begin_layout Itemize
+Jede Tastenbetätigung der rechten Taste (P1.1), soll diese Variabel um eins
+ inkrementieren
+\end_layout
+
+\begin_layout Itemize
+Jede Betätigung der linken Taste (P1.0), soll diese Variable um eins dekrementier
+en
+\end_layout
+
+\begin_layout Itemize
+Der Zahlenwert der Variablen soll als Dezimal- und Hexadezimalzahl auf dem
+ LCD-Display dargestellt werden.
+\end_layout
+
+\begin_layout Itemize
+Werden beide Tasten gleichzeitig gedrückt, wird die Variable auf Null gesetz
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+		unsigned char wert = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+		char string[256];
+\end_layout
+
+\begin_layout Plain Layout
+
+		int update = 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		int waitfor = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+		switch(P1IN) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			case TASTE_LINKS | TASTE_RECHTS:
+\end_layout
+
+\begin_layout Plain Layout
+
+				waitfor = TASTE_LINKS | TASTE_RECHTS;
+\end_layout
+
+\begin_layout Plain Layout
+
+				wert = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+				update = 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+				break;
+\end_layout
+
+\begin_layout Plain Layout
+
+			case TASTE_LINKS:
+\end_layout
+
+\begin_layout Plain Layout
+
+				waitfor = TASTE_LINKS;
+\end_layout
+
+\begin_layout Plain Layout
+
+				wert--;
+\end_layout
+
+\begin_layout Plain Layout
+
+				update = 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+				break;
+\end_layout
+
+\begin_layout Plain Layout
+
+			case TASTE_RECHTS:
+\end_layout
+
+\begin_layout Plain Layout
+
+				waitfor = TASTE_RECHTS;
+\end_layout
+
+\begin_layout Plain Layout
+
+				wert++;
+\end_layout
+
+\begin_layout Plain Layout
+
+				update = 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+				break;
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (!update) // Zeichnen ist teuer
+\end_layout
+
+\begin_layout Plain Layout
+
+			continue;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		sprintf(string, "DEC %03d
+\backslash
+nHEX %03x", wert, wert);
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_clear(WHITE);	// Grafikspeicher auf dem MSP430 löschen
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_string(BLACK, 15, 25, string);	// Textausgabe 
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_paint(); // Grafikspeicher auf das LCD Display ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+
+		update = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+		// Warten, bis die Taste losgelassen wurde
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (waitfor) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			while (P1IN & waitfor) {
+\end_layout
+
+\begin_layout Plain Layout
+
+				;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Touchscreen als Taste
+\end_layout
+
+\begin_layout Subsubsection
+Stellen Sie die Anzahl der Touchscreen (TS) Berührungen auf dem LCD-Display
+ dar.
+ Aktualisieren Sie diese bei jeder Touchscreen Berührung.
+ Realisieren Sie dazu folgende Funktionalität:
+\end_layout
+
+\begin_layout Itemize
+solange linke Taste gedrückt ⇒ LED (P4.2) an,
+\end_layout
+
+\begin_layout Itemize
+wenn dabei dabei TS getippt ⇒ Anzahl um eins erniedrigen solange rechte
+ Taste gedrückt ⇒ LED (P4.0) an,
+\begin_inset Newline newline
+\end_inset
+
+wenn dabei TS getippt ⇒ Anzahl um eins erhöhen
+\end_layout
+
+\begin_layout Itemize
+wenn keine Taste gedrückt ⇒ LED (P4.1) an,
+\begin_inset Newline newline
+\end_inset
+
+wenn dabei TS getippt ⇒ LED (P4.1) toggeln
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+print_value();
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		while(P1IN & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+			if (!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+				wert--;
+\end_layout
+
+\begin_layout Plain Layout
+
+				print_value();
+\end_layout
+
+\begin_layout Plain Layout
+
+				while(!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+				}
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		while(P1IN & TASTE_RECHTS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+			if (!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+				wert++;
+\end_layout
+
+\begin_layout Plain Layout
+
+				print_value();
+\end_layout
+
+\begin_layout Plain Layout
+
+				while(!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+				}				 
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_TOGGLE(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+			while(!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			} 
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+void print_value(void) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		char string[256];
+\end_layout
+
+\begin_layout Plain Layout
+
+		sprintf(string, "DEC %03d
+\backslash
+nHEX %03x", wert, wert);
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_clear(WHITE);	// Grafikspeicher auf dem MSP430 löschen
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_string(BLACK, 15, 25, string);	// Textausgabe
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_paint();		// Grafikspeicher auf das LCD Display ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
