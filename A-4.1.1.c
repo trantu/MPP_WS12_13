@@ -25,3 +25,27 @@ __interrupt void PORT1(void)
 		LED_TOGGLE(LED_ROT);
 	}
 }
+
+// Zweite Version
+#pragma vector = PORT1_VECTOR
+__interrupt void PORT1(void)
+{
+	static int count = 0;
+
+	if (P1IFG & TASTE_LINKS) {
+		BIT_CLR(P1IFG, TASTE_LINKS);
+		LED_TOGGLE(LED_GRUEN);
+		count++;
+		if (count == 10) {
+			LED_ON(LED_GELB);
+			// Als Input setzen, sodass keine Interrupts moeglich sind
+			BIT_SET(P1SEL, TASTE_LINKS);
+		}
+	}
+
+	if (P1IFG & TASTE_RECHTS) {
+		BIT_CLR(P1IFG, TASTE_RECHTS);
+		LED_TOGGLE(LED_ROT);
+	}
+}
+
