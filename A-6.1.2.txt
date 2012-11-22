@@ -1,0 +1,1 @@
+Bei LPM0 - LPM3 is ACLK aktiv und der Sekundeninterrupt würde funktionieren. Bei LPM4 sind alle clocks (auck ACLK) aus, deshalb würde in diesem Modus der Interrupt nicht funktionieren.
