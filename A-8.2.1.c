@@ -71,7 +71,6 @@ __interrupt void TIMERB0(void)
 {
 	// starte conversion
 	ADC12CTL0 |= ADC12SC;
-	LED_TOGGLE(LED_ROT);
 }
 
 #pragma vector = ADC12_VECTOR
@@ -79,7 +78,6 @@ __interrupt void ADC12(void)
 {
 	char buffer[32];
 	int x, y, z;
-	LED_TOGGLE(LED_GRUEN);
 	if (ADC12IFG & BIT2)
 	{
 		x = ADC12MEM0;
