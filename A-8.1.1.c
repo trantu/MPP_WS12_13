@@ -1,38 +1,24 @@
-
-// waehle ACLK
-BIT_SET(TBCTL, TBSSEL0);
-BIT_CLR(TBCTL, TBSSEL1);
-
-// setze divider auf 8
-BIT_SET(TBCTL, ID0 | ID1);
-
-// wahle count up mode
-BIT_SET(TBCTL, MC0);
-BIT_CLR(TBCTL, MC1);
-
-// setze taktanzahl fuer eine sekunde
-TBCCR0 = 4096; // eine sekunde: takt=32000 / divider=8
-
-// loesche interrupt flag fuer timer
-BIT_CLR(TBCCTL0, CCIFG);
-BIT_SET(TBCCTL0, CCIE);
-
-TBR = 1;
-
 // waehle P6.7 als input
 P6SEL |= BIT7;
-// schalte wandler an
-ADC12CTL0 = ADC12ON;
-// ADC12 clock, Single-channel, Single-conversion
-ADC12CTL1 = 0;
+// schalte wandler an, waehle "multiple sample and conversion", SHT = 0 -> 4 cycles
+ADC12CTL0 = ADC12ON + MSC;
+// ADC12 clock, repeat single channel
+ADC12CTL1 = CONSEQ1 + SHP;
 // waehle channel 7
 ADC12MCTL0 = INCH_7;
+// loesche interrupt flag
+BIT_CLR(ADC12IFG, 1);
+// erlaube interrupt
+BIT_SET(ADC12IE, 1);
+
 // erlaube conversion
 ADC12CTL0 |= ENC;
+// starte conversion
+ADC12CTL0 |= ADC12SC;
 
 _bis_SR_register(GIE);
 //===Hier die Endlosschleife quasi das Betriebssystem=====================
-  while(1){
+	while(1){
 	}	// Ende der Endlosschleife
 }		// Ende Main
 //====Ende des Hauptprogramms ============================================
@@ -49,40 +35,34 @@ void print_buf(const char *str)
 }
 
 static float volts;
-#pragma vector = TIMERB0_VECTOR
-__interrupt void TIMERB0(void)
+
+#pragma vector = ADC12_VECTOR
+__interrupt void ADC12(void)
 {
 	char buffer[16];
-	
-	// start conversion
-	ADC12CTL0 |= ADC12SC;
-	
-	// Zeit fuer Approximation
-	wait(1);
-	
-	// stop conversion
-	ADC12CTL0 &= ~ADC12SC;
-	
-	// berechne Spannung
-	volts = ADC12MEM0/4096.0f;
-	volts *= 3.3f; 
-	
-	LED_OFF(LED_ALL);
-	if (volts < 1) 
+	if (ADC12IFG & 1)
 	{
-		LED_ON(LED_GELB);
-	} 
-	else if (volts < 2) 
-	{
-		LED_ON(LED_GRUEN);
-	}
-	else
-	{
-		LED_ON(LED_ROT);
-	}
-	
-	sprintf(buffer, "U=%.2f V", volts);
-	lcd_clear(WHITE);
-	lcd_string(BLACK, 15, 25, buffer);
-	lcd_paint();
+		volts = ADC12MEM0/4096.0f;
+		volts *= 3.3f; 
+		
+		LED_OFF(LED_ALL);
+		if (volts < 1) 
+		{
+			LED_ON(LED_GELB);
+		} 
+		else if (volts < 2) 
+		{
+			LED_ON(LED_GRUEN);
+		}
+		else
+		{
+			LED_ON(LED_ROT);
+		}
+		
+		sprintf(buffer, "U=%.2f V", volts);
+		lcd_clear(WHITE);
+		lcd_string(BLACK, 15, 25, buffer);
+		lcd_paint();
+		BIT_CLR(ADC12IFG, 1);
+	}	
 }
