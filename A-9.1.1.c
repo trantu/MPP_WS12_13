@@ -2,7 +2,7 @@
 //=========================================================================
 //=== Startprojekt zum Mikroprozessorpraktikum ============================
 //=========================================================================
-#include "msp430x16x.h"  	// Systemdefinitionen für den MSP430F1612
+#include "msp430x16x.h"		// Systemdefinitionen für den MSP430F1612
 #include "init.h"			// Initialisierung des Mikrocontrollers
 #include "system.h"			// Systemfunktionen MSB430H
 #include "interrupts.h"		// ISR - Interrupt Service Routinen
@@ -147,7 +147,7 @@ LED_OFF(LED_ALL);
 BIT_SET(TBCCTL0, CCIE);
 
 // 1x Referenzspannung, schnell
-DAC12_0CTL = DAC12IR + DAC12AMP0 + DAC12AMP1 + DAC12AMP2 + DAC12SREF_2 + DAC12CALON;
+DAC12_1CTL = DAC12IR + DAC12AMP0 + DAC12AMP1 + DAC12AMP2 + DAC12SREF_2 + DAC12CALON;
 
 _bis_SR_register(GIE);
 
@@ -163,7 +163,7 @@ __interrupt void TIMERB0(void)
 	static int i = 0;
 
 	// setze Wert fuer DA-Wandler
-	DAC12_0DAT = sinus[i++];
+	DAC12_1DAT = sinus[i++];
 	if (i > 99)
 		i = 0;
 }
