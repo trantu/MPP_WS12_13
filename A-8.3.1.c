@@ -70,8 +70,10 @@ __interrupt void PORT1(void)
 	static const int ymin = 848;
 	static const int ywidth = 3343 - 848;
 
-	if (P1IFG & BIT6) {
-		
+	LED_ON(LED_GELB);
+
+	while (P1IFG & BIT6 || !(P1IN & BIT_YM)) {
+
 		// loesche touch interrupt flag und schalte interrupt aus
 		BIT_CLR(P1IFG, BIT6);
 		BIT_CLR(P1IE, BIT_YM);
@@ -140,7 +142,8 @@ __interrupt void PORT1(void)
 
 		ts_listen();
 		BIT_SET(P1IE, BIT_YM);
-		BIT_CLR(ADC12IFG, 1);
-		
+		BIT_CLR(ADC12IFG, 1);	
 	}
+	
+	LED_OFF(LED_GELB);
 }
