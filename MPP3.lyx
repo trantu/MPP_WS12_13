@@ -25,9 +25,10 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
-\papersize default
-\use_geometry false
+\papersize a4paper
+\use_geometry true
 \use_amsmath 1
 \use_esint 1
 \use_mhchem 1
@@ -42,6 +43,8 @@
 \shortcut idx
 \color #008000
 \end_index
+\leftmargin 2cm
+\rightmargin 2cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -73,6 +76,312 @@ Watchdog
 
 \begin_layout Subsection
 Programmierung
+\end_layout
+
+\begin_layout Subsubsection
+Ermitteln Sie (auf Basis des Blockschaltbildes der Watchdog-Einheit) für
+ den Watchdog alle möglichen Zeiten, die sich auf Basis der ACLK-Taktquelle
+ (f=32768Hz) mit dem WDTCTL Register einstellen lassen.
+ Fassen Sie die notwendigen Bitbelegung des WDTCL-Registers mit den dazu
+ gehörigen Zeiten tabellarisch zusammen.
+\end_layout
+
+\begin_layout Subsubsection
+Wie verändern sich die in A 3.1.1 bestimmten Zeiten wenn man mit den DIVAx-Bits
+ im BCSCTL1-Register die ACLK Vorteiler auf 1, 2, 4, und 8 setzt?
+\end_layout
+
+\begin_layout Subsubsection
+Entwickeln Sie eine eigenständige Endlosschleife die folgenden Ablauf von
+ 5 Schritten zyklisch ausführt: 
+\begin_inset Newline newline
+\end_inset
+
+1.
+ Schritt: alle LED (P4.0..2) aus , 1 Sekunden warten 
+\begin_inset Newline newline
+\end_inset
+
+2.
+ Schritt: LED (P4.0) an, 1 Sekunden warten, LED (P4.0) aus 
+\begin_inset Newline newline
+\end_inset
+
+3.
+ Schritt: LED (P4.1) an, 1 Sekunden warten, LED (P4.1) aus 
+\begin_inset Newline newline
+\end_inset
+
+4.
+ Schritt: LED (P4.2) an, 1 Sekunden warten, LED (P4.2) aus 
+\begin_inset Newline newline
+\end_inset
+
+5.
+ Schritt: alle LED (P4.0..2) an, 1 Sekunden warten, alle LED (P4.0..2) aus
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#define BIT_SET(a,b) ((a) |= (b)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_CLR(a,b) ((a) &= ~(b)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_TOGGLE(a,b) ((a) ^= (b))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ROT (0x01)   // 0 0 1 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_GELB (0x02)  // 0 1 0 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_GRUEN (0x04) // 1 0 0 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ALL (LED_ROT | LED_GELB | LED_GRUEN)
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ON(led) (BIT_CLR(P4OUT, led))  
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_OFF(led) (BIT_SET(P4OUT, led))  
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_TOGGLE(led) (BIT_TOGGLE(P4OUT, led))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define TASTE_LINKS (0x1) #define TASTE_RECHTS (0x2)
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP_QUANTUM 10000 #define SLEEP(n) do { 
+\backslash
+ 	
+\end_layout
+
+\begin_layout Plain Layout
+
+long time = n * 100000; /* wait() sleeps 10*n microseconds */ 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+				while(time > SLEEP_QUANTUM) { 
+\backslash
+ 		
+\end_layout
+
+\begin_layout Plain Layout
+
+				wait(SLEEP_QUANTUM); 
+\backslash
+ 		
+\end_layout
+
+\begin_layout Plain Layout
+
+				time -= SLEEP_QUANTUM; 
+\backslash
+ 	
+\end_layout
+
+\begin_layout Plain Layout
+
+										} 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+				wait(time); 
+\backslash
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+				} while(0)
+\end_layout
+
+\begin_layout Plain Layout
+
+print_value();
+\end_layout
+
+\begin_layout Plain Layout
+
+// P5.4 Input 
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P5SEL, 1 << 4);
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+ 	
+\end_layout
+
+\begin_layout Plain Layout
+
+while(1){ 		LED_OFF(LED_ALL); 		SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_ROT); 		
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(1); 	}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Im nächsten Schritt aktivieren Sie vor der Endlosschleife den Watchdog ohne
+ weitere Einstellungen.
+ Wie verhält sich das Programm jetzt? Erläutern Sie die gemachten Beobachtungen.
+\end_layout
+
+\begin_layout Standard
+Power-LED blinkt ununterbrochen, ohne dass irgendwas noch passiert.
+\end_layout
+
+\begin_layout Subsubsection
+Berechnen Sie für diese Einstellung die Zeit bis der Watchdog einen RESET
+ auslöst.
+ Wie lange dauert ein Durchlauf der Schleife mit den oben beschriebenen
+ fünf Schritten? Zu welchem Zeitpunkt löst der Watchdog einen RESET aus?
+ Testen das Programm und diskutieren Sie das erkennbare Verhalten.
+\end_layout
+
+\begin_layout Itemize
+Es dauert 8.7 Sekunden, bis Reset auslöst.
+\end_layout
+
+\begin_layout Itemize
+Ein Durchlauf der Schleife dauert 5 Sekunden.
+\end_layout
+
+\begin_layout Itemize
+Beim 2.
+ Durchlauf des Programms wird ein Reset von Watchdog ausgelöst.
+\end_layout
+
+\begin_layout Itemize
+Danach läuft das LED-Programm nicht mehr, aber die Power-LED blinkt weiter.
+\end_layout
+
+\begin_layout Subsubsection
+Einen RESET durch den Watchdog innerhalb der Endlosschleife kann verhindert
+ werden, wenn man innerhalb der Endlosschleife den Watchdog neu programmiert.
+ Fügen Sie dazu einfach nach dem 5.Schritt eine entsprechende Codezeile ein.
+ Testen und dokumentieren Sie das.
+\end_layout
+
+\begin_layout Standard
+Dieser Zeilencode wird am Ende der Schleife hinzugefügt:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+WDTCTL = WDTPW + WDTCNTCL + WDTSSEL;
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body
