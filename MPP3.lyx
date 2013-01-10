@@ -70,6 +70,22 @@ Mikroprozessorpraktikum WS 12/13
 Carlos Martín Nieto, Simon Hohberg, Tu Tran
 \end_layout
 
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{section}{2}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Watchdog
 \end_layout
