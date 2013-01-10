@@ -199,7 +199,8 @@ Berechnung:
 \series default
  Über SELM0 = 1 oder 0 und SELM1 = 0 wird die DCOCLK als Taktquelle für
  die MCLK verwendet.
- Der LFXT1 Oszillator der LFXT1CLK liefert einen Takt von 32786 Hz.
+ Der digitale Oszillator DCO liefert mit dem externen Widerstand einen Takt
+ von 7,33 MHz.
  Dieser lässt sich nicht weiter erhöhen und ist daher die maximale Taktrate.
  Durch Verwendung des MCLK Dividers (DIVMx) lässt sich der Takt verringern.
  Der größte Divider ist 8, wodurch sich eine minimale Taktrate von 
@@ -216,8 +217,71 @@ An P2.5 ist ein Oszillatorwiderstand ROSC von 39kOhm angeschlossen.
  aktiviert wird.
 \end_layout
 
+\begin_layout Standard
+Dieser wird über das Setzen von DCOR aktiviert, wie in dem Schaltplan zu
+ sehen ist.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename 2.1.3schaltplan.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Beschaltung der Clocks
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Welchen Einfluss hat der Widerstand auf den DCOCLK-Taktgenerator?
+\end_layout
+
+\begin_layout Standard
+Der Widerstand erhöht den Takt, macht ihn jedoch auch ungenauer (im 10 kHz
+ Bereich).
+ Der Digitale Oszillator der den Takt für die DCOCLK erzeugt verwendet den
+ Betriebsstrom.
+ Der digital erzeugte Takt ist abhängig vom internen Widerstand des digitalen
+ Oszillators.
+ Über DCOR kann nun an Stelle von diesem internen Widerstand (
+\begin_inset Formula $\sim300k\Omega$
+\end_inset
+
+) ein externer Widerstand (hier 
+\begin_inset Formula $39k\Omega$
+\end_inset
+
+) verwendet werden, wodurch sich der erzeugte Takt erhöht.
 \end_layout
 
 \begin_layout Subsection
@@ -235,10 +299,31 @@ Der MCLK-Takt soll durch den DCOCLK-Taktgenerator bereitgestellt werden.
 \end_layout
 
 \begin_layout Standard
-\begin_inset listings
-lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
-inline false
+\begin_inset Float figure
+placement H
+wide false
+sideways false
 status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename stromverbrauch.png
+	scale 90
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Stromverbrauch
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \begin_layout Plain Layout
 
@@ -261,9 +346,127 @@ Entwickeln Sie ein Programm, das auf Tastendruck die MCLK-Taktfrequenz der
  Kontrollieren Sie messtechnisch (wie in A 2.1) den Frequenzwechsel und bestimmen
  Sie den jeweiligen Stromverbrauch des MSB430H (wie in A 2.2).
  Dokumentieren Sie ihre Lösung und die Messergebnisse.
- 
 \end_layout
 
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},frame=single,language=C,numbers=left,tabsize=2"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+	int  pressed = P1IN & (TASTE_LINKS | TASTE_RECHTS);
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (pressed) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			fast = !fast;
+\end_layout
+
+\begin_layout Plain Layout
+
+		while (P1IN & (TASTE_LINKS | TASTE_RECHTS)) {}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (fast) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		// waehle DCOCLK und setze divider auf 1
+\end_layout
+
+\begin_layout Plain Layout
+
+		DCO();
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(BCSCTL2, DIVM0 | DIVM1);	
+\end_layout
+
+\begin_layout Plain Layout
+
+	} else {
+\end_layout
+
+\begin_layout Plain Layout
+
+		// waehle LFXT1CLK und groesstmoeglichen divider
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_SET(BCSCTL2, SELM0 | SELM1);
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_SET(BCSCTL2, DIVM0 | DIVM1);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}	// Ende der Endlosschleife
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+LFXT1CLK mit 4,09 kHz
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Taktmessung: 4,0961 kHz
+\end_layout
+
+\begin_layout Itemize
+Stromverbrauch: 1,41 mA
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+DCOCLK mit 7,3728 MHz
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Taktmessung: 7,385 MHz
+\end_layout
+
+\begin_layout Itemize
+Stromverbrauch: 5,87 mA
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection
 Welche Schlußfolgerungen hinsichtlich des Energieverbrauches ziehen Sie?
  Berechnen Sie für beide gemessenen Stromverbrauchswerte die theoretisch
@@ -272,6 +475,35 @@ Welche Schlußfolgerungen hinsichtlich des Energieverbrauches ziehen Sie?
  
 \end_layout
 
+\begin_layout Standard
+Wir schließen daraus, dass der Stromverbrauch proportional zur Taktfrequenz
+ ist.
+ Eine hohe Taktrate hat einen hohen und eine niedrige Taktrate einen niedrigen
+ Stromverbrauch zur Folge.
+\end_layout
+
+\begin_layout Itemize
+Batterielaufzeit:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+LFXT1CLK mit 4,09 kHz: 
+\begin_inset Formula $\frac{1100\, mAh}{1,41\, mA}=774,65\, h=\underline{32,277\, d}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+DCOCLK mit 7,3728 MHz: 
+\begin_inset Formula $\frac{1100\, mAh}{5,87\, mA}=186,757\, h=\underline{7,7816\, d}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \begin_layout Subsection
 Codezeile
 \end_layout
@@ -280,7 +512,83 @@ Codezeile
 Bestimmen Sie messtechnisch mit dem Counter HM8021 die Abarbeitungzeit der
  folgenden Codezeile für die zwei Taktquellen DCOCLK (7,3728 MHz) und der
  LFXT1CLK (32 kHz).
- 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},frame=single,language=C,numbers=left,tabsize=2"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+P5OUT^= 0x20; // toggelt die Portleitung P5.5
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Wir messen die Frequenz an der Portleitung P5.5, die durch folgenden Code
+ erzeugt wird:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},frame=single,language=C,numbers=left,tabsize=2"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+P5OUT &= ~0x20;     // setzt die Portleitung P5.5 auf L 
+\end_layout
+
+\begin_layout Plain Layout
+
+while (1) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    P5OUT^= 0x20;   // setzt P5.5 auf H
+\end_layout
+
+\begin_layout Plain Layout
+
+    P5OUT^= 0x20;   // setzt P5.5 auf L
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Ausführungsfrequenz: 6,14059 kHz 
+\begin_inset Formula $\rightarrow\,\frac{1}{6,14059}\cdot10^{-6}s=1,629ms$
+\end_inset
+
+ für die zweimalige Ausführung der Codezeile und damit 
+\begin_inset Formula $0,8145ms$
+\end_inset
+
+ für eine Codezeile (unter Vernachlässigung des 
+\begin_inset Quotes eld
+\end_inset
+
+jumps
+\begin_inset Quotes erd
+\end_inset
+
+ der while-Schleife).
 \end_layout
 
 \end_body
