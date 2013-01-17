@@ -2,6 +2,17 @@ static unsigned char hours = 0;
 static unsigned char mins = 0;
 static unsigned char secs = 0;
 
+void print_buf(const char *str)
+{
+	do {
+		U1TXBUF = *str;
+		/*
+		* (115200 / 8)**-1 = 70us pro Zeichen
+		*/
+		wait(7);
+	} while(*str++);
+}
+
 #pragma vector = TIMERB0_VECTOR
 __interrupt void TIMERB0(void)
 {
