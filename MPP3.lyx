@@ -102,9 +102,156 @@ Ermitteln Sie (auf Basis des Blockschaltbildes der Watchdog-Einheit) für
  gehörigen Zeiten tabellarisch zusammen.
 \end_layout
 
+\begin_layout Standard
+WDTISx Watchdog divider:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+00
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+32768
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1000 ms
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+01
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8192
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+250 ms
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+512
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15,265 ms
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1,9 ms
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Wie verändern sich die in A 3.1.1 bestimmten Zeiten wenn man mit den DIVAx-Bits
  im BCSCTL1-Register die ACLK Vorteiler auf 1, 2, 4, und 8 setzt?
+\end_layout
+
+\begin_layout Standard
+Da wird die Taktfrequenz geteilt, daraus wird das Intervall multipliziert.
 \end_layout
 
 \begin_layout Subsubsection
@@ -345,7 +492,12 @@ Im nächsten Schritt aktivieren Sie vor der Endlosschleife den Watchdog ohne
 \end_layout
 
 \begin_layout Standard
-Power-LED blinkt ununterbrochen, ohne dass irgendwas noch passiert.
+Beobachtung: keine LEDs gehen an, nur power On LED
+\begin_inset Newline newline
+\end_inset
+
+Erklärung: Watchdog hat Reset sehr schnell durchgeführt und das Timer-Intervall
+ ist zu klein.
 \end_layout
 
 \begin_layout Subsubsection
@@ -357,7 +509,12 @@ Berechnen Sie für diese Einstellung die Zeit bis der Watchdog einen RESET
 \end_layout
 
 \begin_layout Itemize
-Es dauert 8.7 Sekunden, bis Reset auslöst.
+Berechnung: Es dauert 8 Sekunden, bis Reset auslöst (= 1/8 Hz).
+\end_layout
+
+\begin_layout Itemize
+Beobachtung: Es dauert ca.
+ 4 Sekunden, bis Reset auslöst.
 \end_layout
 
 \begin_layout Itemize
@@ -392,7 +549,271 @@ status open
 
 \begin_layout Plain Layout
 
+...
+\end_layout
+
+\begin_layout Plain Layout
+
 WDTCTL = WDTPW + WDTCNTCL + WDTSSEL;
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Verteilung
+\end_layout
+
+\begin_layout Subsubsection
+Stellen Sie sich vor nach dem 3.
+ Schritt aus A3.1.3 und der erfolgten Änderung aus A3.1.6 wird das Programm
+ gezwungen längere Zeit eine andere Aufgabe abzuarbeiten.
+ Wir simulieren das durch folgende Codezeile:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+while(P1IN&0x01){P4OUT &=~0x01; wait(30000); P4OUT |= 0x01; wait(30000);};
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Solange der linke Taster gedrückt ist, blinkt die rote LED wait(30000) lang,
+ dann fängt alles von vorne an.
+\end_layout
+
+\begin_layout Subsubsection
+Jetzt ändern Sie bitte die folgende Codezeile so, dass während der Taster
+ gedrückt ist, kein RESET durch den Watchdog ausgelöst wird.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+while(P1IN&0x01){
+\end_layout
+
+\begin_layout Plain Layout
+
+	WDTCTL = WDTPW + WDTHOLD; // Watchdog aus
+\end_layout
+
+\begin_layout Plain Layout
+
+	P4OUT &=~0x01; 
+\end_layout
+
+\begin_layout Plain Layout
+
+	wait(30000); 
+\end_layout
+
+\begin_layout Plain Layout
+
+	P4OUT |= 0x01; 
+\end_layout
+
+\begin_layout Plain Layout
+
+	wait(30000);
+\end_layout
+
+\begin_layout Plain Layout
+
+	WDTCTL = WDTPW + WDTCNTCL + WDTSSEL; //Watchdog an
+\end_layout
+
+\begin_layout Plain Layout
+
+};
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Der Watchdog wird so eingestellt, dass er vor der Ausführung der Programmcodes
+ ausgeschaltet und danach wieder angeschaltet wird.
+ Damit wird verhindert, dass kein RESET während der Ausführung des Programms
+ ausgelöst wird.
+\end_layout
+
+\begin_layout Paragraph
+In realen Systemen kann es durchaus passieren, dass aufgrund von Speicherfehlern
+ oder Softwareproblemen ein System sich ständig neu startet.
+ Wie kann man programmtechnisch registrieren und speichern, wann und an
+ welcher Programmstelle der Watchdog das System neu gestartet hat.
+ Skizzieren Sie einen Lösungsansatz.
+ Als Hilfestellung hier folgende Stichwörter:
+\end_layout
+
+\begin_layout Itemize
+NMI-Interrupt 
+\end_layout
+
+\begin_layout Itemize
+Stackpointer
+\end_layout
+
+\begin_layout Itemize
+Programcounter 
+\end_layout
+
+\begin_layout Itemize
+Software bzw.
+ System Reset 
+\end_layout
+
+\begin_layout Itemize
+Information memory
+\end_layout
+
+\begin_layout Standard
+Lösung:
+\begin_inset Newline newline
+\end_inset
+
+Anstatt Reset-Funktion wird die NMI-Funktion benutzt um Kontrolle behalten
+ zu können.
+ Dabei werden eigene Funktionen für die RSI-Interupts verwendet.
+ Einer ISR stehen PC und SR zur Verfügung.
+ Im Flash-Speicher gibt es einen Bereich (Information Memory 256-Byte),
+ indem PC und SR Werte gespeichert werden, wenn der Interupt ausgelöst wird.
+ Danach wird ein Reset von uns ausgeführt.
+\end_layout
+
+\begin_layout Subsection
+Software-Reset
+\end_layout
+
+\begin_layout Subsubsection
+Bei Auftreten der Codezeile
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+int main() 
+\end_layout
+
+\begin_layout Plain Layout
+
+{ #define MCU_RESET (WDTCTL = 0) 	
+\end_layout
+
+\begin_layout Plain Layout
+
+	BIT_SET(P1SEL, TASTE_LINKS | TASTE_RECHTS);
+\end_layout
+
+\begin_layout Plain Layout
+
+	LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+	while (1) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		// wenn eine Taste gedrückt wird
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (P1IN & (TASTE_LINKS | TASTE_RECHTS)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_ALL); // alle LEDs an
+\end_layout
+
+\begin_layout Plain Layout
+
+			wait(30000);
+\end_layout
+
+\begin_layout Plain Layout
+
+			MCU_RESET; // ein Reset des Controllers wird durchgeführt
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+...
 \end_layout
 
 \end_inset
