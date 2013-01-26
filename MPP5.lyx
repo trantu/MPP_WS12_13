@@ -1,0 +1,666 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\rightmargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Mikroprozessorpraktikum WS 12/13
+\end_layout
+
+\begin_layout Author
+Carlos Martín Nieto, Simon Hohberg, Tu Tran
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{section}{4}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+LPM Mode
+\end_layout
+
+\begin_layout Subsection
+LPM und Interrupt
+\end_layout
+
+\begin_layout Subsubsection
+Starten Sie den Controller und überprüfen Sie messtechnisch den Stromverbrauch
+ und die MCLK-Taktfrequenz (wie in A 2.1.1 und A2.2.1).
+\begin_inset Newline newline
+\end_inset
+
+Fügen Sie in der while(1) Schleife der main() Funktion einen Befehl ein,
+ der den Mikrocontroller in den LPM4 Mode setzt.
+\begin_inset Newline newline
+\end_inset
+
+Starten Sie das Programm.
+ Was bewirkt der Befehl? Wie verhalten sich die Taktfrequenz und der Stromverbra
+uch?
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Normal:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stromverbrauch
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Taktfrequenz
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6,25 mA
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7,35 MHz
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+LPM4 Mode:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stromverbrauch
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Taktfrequenz
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0,97 mA
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Keine Takfrequenz, da alle clocks und die CPU abgeschaltet werden.
+\end_layout
+
+\begin_layout Subsubsection*
+Programmieren Sie den Port1 in der Form, dass bei einem Druck auf die Taste
+ (P1.0) ein Interrupt ausgelöst wird.
+ Die while(1) Schleife bleibt unverändert, es befindet sich nur die LPM4
+ Anweisung in der Schleife.
+ Realisieren Sie in der ISR des PORT1 eine 10 Sekunden dauernde Warteschleife.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#define SLEEP_QUANTUM 10000
+\end_layout
+
+\begin_layout Plain Layout
+
+/*
+\end_layout
+
+\begin_layout Plain Layout
+
+ * schlaeft fuer n Sekunden
+\end_layout
+
+\begin_layout Plain Layout
+
+ */
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP(n) do { 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	long time = n * 100000; /* wait() sleeps 10*n microseconds */ 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(time > SLEEP_QUANTUM) { 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		wait(SLEEP_QUANTUM); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		time -= SLEEP_QUANTUM; 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	} 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	wait(time); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+} while(0)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// P1.0 Input
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1DIR, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IES, TASTE_LINKS); // HL an linker taste loest interrupt aus
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IE, TASTE_LINKS);  // interrupts fuer linke taste erlauben
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IFG, TASTE_LINKS); // interrupt flag loeschen
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// takt ausgeben, zum debuggen
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P5SEL, 1 << 4);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P5DIR, 1 << 4);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		LPM4;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = PORT1_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void PORT1(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		LPM4_EXIT;
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(10);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(P1IFG, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Dokumentieren Sie die Beobachtungen (Stromverbrauch und Taktfrequenz) zum
+ Zeitpunkt des Tastendruckes.
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stromverbrauch
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Taktfrequenz
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5,16 mA
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7,36 MHz
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Erläutern Sie die Abläufe nach dem Starten des Programms im Detail und die
+ Zustände des Mikrocontrollers.
+ 
+\end_layout
+
+\begin_layout Standard
+Beim Starten des Programms...
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename MicroController_state_LPM.png
+	scale 50
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Programmzustand
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Auto Shutdown
+\end_layout
+
+\begin_layout Subsubsection
+Für die Umsetzung der oben beschriebenen Verhaltensweise, werden der Watchdog
+ in einer Timer Anwendung und parallel dazu zwei Interruptquellen genutzt.
+ Der Taster (P1.0) soll als Bedienelement genutzt werden.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Wake Up
+\end_layout
+
+\begin_layout Subsubsection
+Der Taster an der Portleitung (P1.0) ersetzt uns den Sensor.
+ Per ISR soll ein Zustandswechsel an der Portleitung erfasst werden.
+ Eine LH-Flanke setzt eine Statusvariable auf 1 und eine HL-Flanke setzt
+ die Statusvariable auf 0.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
