@@ -113,11 +113,40 @@ WDTISx Watchdog divider:
 
 
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="3">
+<lyxtabular version="3" rows="5" columns="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Belegung
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Divider
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Zeit
+\end_layout
+
+\end_inset
+</cell>
+</row>
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -128,7 +157,7 @@ WDTISx Watchdog divider:
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -251,7 +280,7 @@ Wie verändern sich die in A 3.1.1 bestimmten Zeiten wenn man mit den DIVAx-Bits
 \end_layout
 
 \begin_layout Standard
-Da wird die Taktfrequenz geteilt, daraus wird das Intervall multipliziert.
+Die Taktfrequenz wird geteilt und dadurch das Intervall multipliziert.
 \end_layout
 
 \begin_layout Subsubsection
@@ -347,7 +376,35 @@ status open
 
 \begin_layout Plain Layout
 
-#define SLEEP_QUANTUM 10000 #define SLEEP(n) do { 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP_QUANTUM 10000
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+/*
+\end_layout
+
+\begin_layout Plain Layout
+
+ * NOPs um n Sekunden zu warten.
+\end_layout
+
+\begin_layout Plain Layout
+
+ */
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP(n) do { 
 \backslash
  	
 \end_layout
@@ -401,17 +458,20 @@ long time = n * 100000; /* wait() sleeps 10*n microseconds */
 
 \begin_layout Plain Layout
 
-print_value();
 \end_layout
 
 \begin_layout Plain Layout
 
-// P5.4 Input 
+// Setze P5.4 auf Input 
 \end_layout
 
 \begin_layout Plain Layout
 
 BIT_SET(P5SEL, 1 << 4);
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -422,7 +482,17 @@ BIT_SET(P5SEL, 1 << 4);
 
 \begin_layout Plain Layout
 
-while(1){ 		LED_OFF(LED_ALL); 		SLEEP(1);
+while(1){ 
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_ALL); 
+\end_layout
+
+\begin_layout Plain Layout
+
+		SLEEP(1);
 \end_layout
 
 \begin_layout Plain Layout
@@ -477,7 +547,12 @@ while(1){ 		LED_OFF(LED_ALL); 		SLEEP(1);
 
 \begin_layout Plain Layout
 
-		SLEEP(1); 	}
+		SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
 \end_layout
 
 \end_inset
@@ -492,12 +567,44 @@ Im nächsten Schritt aktivieren Sie vor der Endlosschleife den Watchdog ohne
 \end_layout
 
 \begin_layout Standard
-Beobachtung: keine LEDs gehen an, nur power On LED
-\begin_inset Newline newline
+
+\series bold
+Beobachtung:
+\series default
+ 
+\end_layout
+
+\begin_layout Itemize
+es gehen keine LEDs an
+\end_layout
+
+\begin_layout Itemize
+die Power On LED flackert
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Erklärung:
+\series default
+ Der Watchdog führt immer wieder sehr schnell (durch ein sehr kurzes Timerinterv
+all) einen RESET durch, was die Power On LED aus- und wieder anschaltet.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+newpage
+\end_layout
+
 \end_inset
 
-Erklärung: Watchdog hat Reset sehr schnell durchgeführt und das Timer-Intervall
- ist zu klein.
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -505,29 +612,62 @@ Berechnen Sie für diese Einstellung die Zeit bis der Watchdog einen RESET
  auslöst.
  Wie lange dauert ein Durchlauf der Schleife mit den oben beschriebenen
  fünf Schritten? Zu welchem Zeitpunkt löst der Watchdog einen RESET aus?
- Testen das Programm und diskutieren Sie das erkennbare Verhalten.
+ Testen Sie das Programm und diskutieren Sie das erkennbare Verhalten.
 \end_layout
 
 \begin_layout Itemize
-Berechnung: Es dauert 8 Sekunden, bis Reset auslöst (= 1/8 Hz).
+
+\series bold
+Berechnung der RESET-Zeit: 
+\size scriptsize
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\size larger
+
+\begin_inset Formula $\frac{32768}{\frac{32768\, Hz}{8}}=\frac{32768\cdot8}{32768\cdot\frac{1}{s}}=\underline{8\, s}$
+\end_inset
+
+
+\series default
+\size default
+
+\begin_inset Newline newline
+\end_inset
+
+Es dauert 8 Sekunden, bis der RESET ausgelöst wird (= 1/8 Hz).
 \end_layout
 
 \begin_layout Itemize
-Beobachtung: Es dauert ca.
- 4 Sekunden, bis Reset auslöst.
+
+\series bold
+Beobachtung:
+\series default
+ 
 \end_layout
 
+\begin_deeper
 \begin_layout Itemize
-Ein Durchlauf der Schleife dauert 5 Sekunden.
+Es dauert ca.
+ 4 Sekunden bis der RESET ausgelöst wird.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Ein Schleifendurchlauf dauert etwa 5 Sekunden.
 \end_layout
 
 \begin_layout Itemize
 Beim 2.
- Durchlauf des Programms wird ein Reset von Watchdog ausgelöst.
-\end_layout
-
-\begin_layout Itemize
-Danach läuft das LED-Programm nicht mehr, aber die Power-LED blinkt weiter.
+ Durchlauf des Programms löst der Watchdog einen RESET aus.
+ Danach läuft das LED-Programm nicht mehr, aber die Power-LED blinkt weiter,
+ weil der Watchdog vor der Ausführung einen RESET auslöst.
 \end_layout
 
 \begin_layout Subsubsection
@@ -538,7 +678,7 @@ Einen RESET durch den Watchdog innerhalb der Endlosschleife kann verhindert
 \end_layout
 
 \begin_layout Standard
-Dieser Zeilencode wird am Ende der Schleife hinzugefügt:
+Folgende Codezeile wird am Ende der Schleife hinzugefügt:
 \end_layout
 
 \begin_layout Standard
@@ -550,6 +690,11 @@ status open
 \begin_layout Plain Layout
 
 ...
+\end_layout
+
+\begin_layout Plain Layout
+
+// Verwenden des Watchdog Passworts, Löschen des Counters, waehle ACLK
 \end_layout
 
 \begin_layout Plain Layout
@@ -606,8 +751,17 @@ while(P1IN&0x01){P4OUT &=~0x01; wait(30000); P4OUT |= 0x01; wait(30000);};
 \end_layout
 
 \begin_layout Standard
-Solange der linke Taster gedrückt ist, blinkt die rote LED wait(30000) lang,
- dann fängt alles von vorne an.
+Die while-Schleife wird solange ausgeführt wie der linke Taster gedrückt
+ ist.
+ In der Schleife wird die rote LED zunächst angeschaltet und alle anderen
+ LEDs ausgeschaltet, dann wird drei Sekunden gewartet.
+ Danach wird die rote LED angeschaltet und wieder drei Sekunden gewartet.
+\end_layout
+
+\begin_layout Standard
+Wenn der Taster länger als sechs Sekunden oder dauerhaft gedrückt wird,
+ blinkt die rote LED im Takt von sechs Sekunden, jedoch wird dies durch
+ den Watchdog RESET nach acht Sekunden unterbrochen.
 \end_layout
 
 \begin_layout Subsubsection
@@ -658,7 +812,7 @@ while(P1IN&0x01){
 
 \begin_layout Plain Layout
 
-	WDTCTL = WDTPW + WDTCNTCL + WDTSSEL; //Watchdog an
+	WDTCTL = WDTPW + WDTCNTCL + WDTSSEL; //Watchdog neu konfigurieren, starten
 \end_layout
 
 \begin_layout Plain Layout
@@ -679,7 +833,7 @@ while(P1IN&0x01){
 \begin_layout Standard
 Der Watchdog wird so eingestellt, dass er vor der Ausführung der Programmcodes
  ausgeschaltet und danach wieder angeschaltet wird.
- Damit wird verhindert, dass kein RESET während der Ausführung des Programms
+ Damit wird verhindert, dass ein RESET während der Ausführung des Programms
  ausgelöst wird.
 \end_layout
 
@@ -714,17 +868,30 @@ Information memory
 \end_layout
 
 \begin_layout Standard
-Lösung:
-\begin_inset Newline newline
-\end_inset
-
-Anstatt Reset-Funktion wird die NMI-Funktion benutzt um Kontrolle behalten
- zu können.
+Anstatt der RESET-Funktion wird die NMI-Funktion benutzt, um die Kontrolle
+ behalten zu können.
  Dabei werden eigene Funktionen für die RSI-Interupts verwendet.
  Einer ISR stehen PC und SR zur Verfügung.
  Im Flash-Speicher gibt es einen Bereich (Information Memory 256-Byte),
- indem PC und SR Werte gespeichert werden, wenn der Interupt ausgelöst wird.
+ in dem PC und SR Werte gespeichert werden, wenn der Interupt ausgelöst
+ wird.
  Danach wird ein Reset von uns ausgeführt.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+newpage
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -744,6 +911,115 @@ status open
 \begin_layout Plain Layout
 
 ...
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+MCU_RESET; 
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+im Quellcode soll ein RESET des Controllers herbeigeführt werden.
+ Vervollständigen Sie dafür folgende Codezeile 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+...
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define MCU_RESET (...) 
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Schreiben Sie ein kleines Programm, mit dem Sie die Funktion testen können.
+ Das Programm soll bei Tastendruck einen RESET auslösen und über die LED
+ ein Neustart des Controllers in geeigneter Weise signalisieren.
+ Nutzen Sie dazu den Watchdog.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+// loest einen Power-Up Clear aus, da kein WDTPW verwendet wird
+\end_layout
+
+\begin_layout Plain Layout
+
+#define MCU_RESET (WDTCTL = 0)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// verbinde Taster mit P1
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1SEL, TASTE_LINKS | TASTE_RECHTS);
+\end_layout
+
+\begin_layout Plain Layout
+
+// schlate alle LEDs aus
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -753,17 +1029,7 @@ int main()
 
 \begin_layout Plain Layout
 
-{ #define MCU_RESET (WDTCTL = 0) 	
-\end_layout
-
-\begin_layout Plain Layout
-
-	BIT_SET(P1SEL, TASTE_LINKS | TASTE_RECHTS);
-\end_layout
-
-\begin_layout Plain Layout
-
-	LED_OFF(LED_ALL);
+{
 \end_layout
 
 \begin_layout Plain Layout
