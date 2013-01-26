@@ -1,0 +1,1299 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\rightmargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Mikroprozessorpraktikum WS 12/13
+\end_layout
+
+\begin_layout Author
+Carlos Martín Nieto, Simon Hohberg, Tu Tran
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{section}{3}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Interrupt
+\end_layout
+
+\begin_layout Subsection
+Taster
+\end_layout
+
+\begin_layout Subsubsection
+Bisher konnten wir den Zustand einer Portleitung nur durch fortwährendes
+ Abfragen testen.
+ Dahinter steht der Begriff Polling.
+ Nun wollen wir die Interruptfähigkeit des Ports P1 nutzen.
+ Der Effekt besteht darin, daß hardwaremäßig eine LH- bzw.
+ HL-Flanke automatisch eine Interrupt Service Routine (ISR) startet.
+ 
+\end_layout
+
+\begin_layout Itemize
+Teilaufgabe 1:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// konfiguriere Taster-Interrupts
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IES, TASTE_LINKS); // LH 
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IES, TASTE_RECHTS); // LH
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// erlaube Interrupt
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// loesche Interruptflags
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IFG, TASTE_LINKS | TASTE_RECHTS);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+while(1){ 	
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife 
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main 
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = PORT1_VECTOR 
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void PORT1(void) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn Interrupt fuer linken Taster
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_LINKS) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(P1IFG, TASTE_LINKS); 
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_TOGGLE(LED_GRUEN); 
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn Interrupt fuer rechten Taster
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_RECHTS) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(P1IFG, TASTE_RECHTS); 
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_TOGGLE(LED_ROT); 
+\end_layout
+
+\begin_layout Plain Layout
+
+	} 
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Teilaufgabe 2:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// konfiguriere Taster-Interrupts
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IES, TASTE_LINKS); // LH 
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IES, TASTE_RECHTS); // HL
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// erlaube Interrupt
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// loesche Interruptflags
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IFG, TASTE_LINKS | TASTE_RECHTS);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+  
+\end_layout
+
+\begin_layout Plain Layout
+
+while(1){ 	
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife 
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main 
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = PORT1_VECTOR 
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void PORT1(void) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn Interrupt fuer linken Taster
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_LINKS) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(P1IFG, TASTE_LINKS); 
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_TOGGLE(LED_GRUEN); 
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn Interrupt fuer rechten Taster
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_RECHTS) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(P1IFG, TASTE_RECHTS); 
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_TOGGLE(LED_ROT); 
+\end_layout
+
+\begin_layout Plain Layout
+
+	} 
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Teilaufgabe 3:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// konfiguriere Taster-Interrupts
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IES, TASTE_LINKS); // LH 
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IES, TASTE_RECHTS); // HL
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// erlaube Interrupt
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// loesche Interruptflags
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IFG, TASTE_LINKS | TASTE_RECHTS);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL); 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+  
+\end_layout
+
+\begin_layout Plain Layout
+
+while(1){ 	
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife 
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main 
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void PORT1(void) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+	static int count = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn Interrupt fuer linken Taster
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(P1IFG, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_TOGGLE(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+		count++;
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (count == 10) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+			// Als Input setzen, sodass keine Interrupts moeglich sind
+\end_layout
+
+\begin_layout Plain Layout
+
+			BIT_SET(P1SEL, TASTE_LINKS); 
+\end_layout
+
+\begin_layout Plain Layout
+
+		} 
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn Interrupt fuer rechten Taster
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_RECHTS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(P1IFG, TASTE_RECHTS); 
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_TOGGLE(LED_ROT); 
+\end_layout
+
+\begin_layout Plain Layout
+
+	} 
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Totmann
+\end_layout
+
+\begin_layout Subsubsection
+Der Watchdog und ein Tasten-Interrupt sollen in dieser Aufgabe gleichzeitig
+ genutzt werden.
+ In der Technik kommt so etwas in Form einer sogenannten Totmannschaltung
+ vor.
+ Betätigt der Fahrer eines Fahrzeugs innerhalb eines festgelegten Zeitraumes
+ nicht eine Taste, erfolgt eine Notbremsung.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// konfiguriere Interrupts fuer Taster
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IES, TASTE_LINKS); // LH
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IE, TASTE_LINKS);  // erlaube Interrupts
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IFG, TASTE_LINKS); // loesche Interruptflag
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// setze ACLK divider auf 4
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(BCSCTL1, DIVA1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// konfiguriere Watchdog:
+\end_layout
+
+\begin_layout Plain Layout
+
+// Passwort, Counter zuruecksetzen, ACKL, Interval Timer Mode
+\end_layout
+
+\begin_layout Plain Layout
+
+WDTCTL = WDTPW + WDTCNTCL + WDTSSEL + WDTTMSEL;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// erlaube Interrupt fuer Watchdog
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(IE1, WDTIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_TOGGLE(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+		wait(50000);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = PORT1_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void PORT1(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn linker Taster gedrueckt
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			BIT_CLR(P1IFG, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+			// Watchdog neu knofigurieren
+\end_layout
+
+\begin_layout Plain Layout
+
+			WDTCTL = WDTPW + WDTCNTCL + WDTSSEL + WDTTMSEL;
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_GELB);	
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = WDT_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void WDT(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	// Interruptflag zuruecksetzen
+\end_layout
+
+\begin_layout Plain Layout
+
+	BIT_CLR(IFG1, WDTIFG);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn gelbe LED aus ist, schalte sie wieder an
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P4OUT & LED_GELB) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+	} else {
+\end_layout
+
+\begin_layout Plain Layout
+
+		// Watchdog stoppen
+\end_layout
+
+\begin_layout Plain Layout
+
+		WDTCTL = WDTPW + WDTHOLD;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		// fuehre Ampelsequenz aus
+\end_layout
+
+\begin_layout Plain Layout
+
+		while (true) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_GELB | LED_GRUEN | LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+			SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+			SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_GELB | LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+			SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+			SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Touchscreen
+\end_layout
+
+\begin_layout Subsubsection
+In der Aufgabe A 1.5.1 ist der Touchscreen schon als Taste genutzt worden.
+ Allerdings wurde die Funktion unter Nutzung von Polling realisiert.
+ In dieser Aufgabe soll die gleiche Aufgabenstellung unter Nutzung des Touchscre
+ens als Interruptquelle gelöst werden.
+ Bitte beachten Sie, daß nur der Touchscreen einen Interrupt auslösen kann.
+ Die beiden Taster werden in der Interruptservice nur eingelesen um die
+ Zählrichtung festzustellen.
+ 
+\begin_inset Newline newline
+\end_inset
+
+Stellen Sie die Anzahl der Touchscreen (TS) Berührungen auf dem LCD-Display
+ dar und aktualisieren Sie diese ständig.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+print_value();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		while(P1IN & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+			LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+			LED_ON(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+			if (!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+				wert--;
+\end_layout
+
+\begin_layout Plain Layout
+				print_value();
+\end_layout
+
+\begin_layout Plain Layout
+				while(!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+				}
+\end_layout
+
+\begin_layout Plain Layout
+			}
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		LED_OFF(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+		while(P1IN & TASTE_RECHTS) {
+\end_layout
+
+\begin_layout Plain Layout
+			LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+			LED_ON(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+			if (!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+				wert++;
+\end_layout
+
+\begin_layout Plain Layout
+				print_value();	
+\end_layout
+
+\begin_layout Plain Layout
+				while(!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+				}				
+\end_layout
+
+\begin_layout Plain Layout
+			}
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+		LED_OFF(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+		if (!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+			LED_TOGGLE(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+			while(!(P1IN & BIT_YM)) {
+\end_layout
+
+\begin_layout Plain Layout
+			}
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+void print_value(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+		char string[256];
+\end_layout
+
+\begin_layout Plain Layout
+		sprintf(string, "DEC %03d
+\backslash
+nHEX %03x", wert, wert);
+\end_layout
+
+\begin_layout Plain Layout
+		lcd_clear(WHITE);	// Grafikspeicher auf dem MSP430 löschen
+\end_layout
+
+\begin_layout Plain Layout
+		lcd_string(BLACK, 15, 25, string);	// Textausgabe
+\end_layout
+
+\begin_layout Plain Layout
+		lcd_paint();		// Grafikspeicher auf das LCD Display ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
