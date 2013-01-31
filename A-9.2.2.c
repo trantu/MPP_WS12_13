@@ -1,4 +1,3 @@
-
 //=========================================================================
 //=== Startprojekt zum Mikroprozessorpraktikum ============================
 //=========================================================================
@@ -142,7 +141,7 @@ BIT_SET(TBCTL, MC0);
 BIT_CLR(TBCTL, MC1);
 
 // setze anzahl fuer interrupt
-TBCCR0 = 1; // 7.4 MHz: takt=7_400_000 / 100000 = count to 74
+TBCCR0 = 1; // trieggere staendig
 
 // loesche interrupt flag fuer timer
 BIT_CLR(TBCCTL0, CCIFG);
