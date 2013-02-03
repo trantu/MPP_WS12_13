@@ -1,0 +1,1800 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\rightmargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Mikroprozessorpraktikum WS 12/13
+\end_layout
+
+\begin_layout Author
+Carlos Martín Nieto, Simon Hohberg, Tu Tran
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{section}{5}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Timer
+\end_layout
+
+\begin_layout Subsection
+Zeitbasis
+\end_layout
+
+\begin_layout Subsubsection
+Finden Sie eine Lösung, die auf Basis eines Timer-Interrupts den Zustand
+ der LED (P4.0) toggelt.
+ Dazu muss der Timer jede Sekunde einen Interrupt generieren und in der
+ ISR wird die LED getoggelt.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+TBR = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// waehle ACLK
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(TBCTL, TBSSEL0);
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(TBCTL, TBSSEL1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// wahle count up mode
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(TBCTL, MC0);
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(TBCTL, MC1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// setze taktanzahl fuer eine sekunde
+\end_layout
+
+\begin_layout Plain Layout
+TBCCR0 = 32769;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// loesche interrupt flag
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(TBCCTL0, CCIFG);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// interrupt freigeben
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(TBCCTL0, CCIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = TIMERB0_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void TIMERB0(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	// toggle die LED
+\end_layout
+
+\begin_layout Plain Layout
+	LED_TOGGLE(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+	
+\end_layout
+
+\begin_layout Plain Layout
+	BIT_CLR(TBCCTL0, CCIFG);
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+In welchen Low Powermodi würde der Sekundeninterrupt auf Basis der ACLK-Taktquel
+le funktionieren und in welchen nicht? Begründen Sie die Antwort.
+\end_layout
+
+\begin_layout Standard
+In den Low Powermodi LPM0 - 3 würde dies funktionieren, da die ACLK laut
+ Dokumentation in diesen Modi nicht abgeschaltet wird.
+ Im LPM4 Modus würde dies hingegen nicht möglich sein, weil hier die ACLK
+ abgeschaltet wird.
+\end_layout
+
+\begin_layout Subsubsection
+Nutzen Sie das Programm aus Aufgabe 6.1.1 als Ausgangsbasis.
+ Setzen Sie den Divider des Timers unter Nutzung der IDx Bits auf 8.
+ Erweitern Sie bitte das Programm in der Form, dass jeweils durch einen
+ Tastendruck und eine Manipulation des TBCCR0 Registers: 
+\begin_inset Newline newline
+\end_inset
+
+• Taster (P1.0), das Zeitintervall verdoppelt wird 
+\begin_inset Newline newline
+\end_inset
+
+• Taster (P1.1), das Zeitintervall halbiert wird 
+\begin_inset Newline newline
+\end_inset
+
+Die Taster sollen im Interrupt genutzt werden und der zulässige Zahlenbereich
+ von TBCCR0 darf nicht verlassen werden.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+TBR = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// waehle ACLK
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(TBCTL, TBSSEL0);
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(TBCTL, TBSSEL1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// wahle count up mode
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(TBCTL, MC0);
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(TBCTL, MC1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// setze taktanzahl fuer eine sekunde
+\end_layout
+
+\begin_layout Plain Layout
+TBCCR0 = 32769;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// loesche interrupt flag fuer timer
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(TBCCTL0, CCIFG);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(P1IES, TASTE_LINKS | TASTE_RECHTS); // LH an linker taste loest
+ interrupt aus
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(P1IFG, TASTE_LINKS | TASTE_RECHTS); // interrupt flag loeschen
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); // interrupts fuer linke taste
+ erlauben
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// interrupt fuer timer freigeben
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(TBCCTL0, CCIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = TIMERB0_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void TIMERB0(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	LED_TOGGLE(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+	
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = PORT1_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void PORT1(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	unsigned long new_value = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn linker taster gedrueckt wird
+\end_layout
+
+\begin_layout Plain Layout
+	if (P1IFG & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(P1IFG, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		// verdoppele den aktuellen wert
+\end_layout
+
+\begin_layout Plain Layout
+		new_value = (long)TBCCR0 * (long)2;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		// ueberpruefe, ob der neue wert die obere grenze ueberschreitet
+\end_layout
+
+\begin_layout Plain Layout
+		if (new_value > 0xffff) {
+\end_layout
+
+\begin_layout Plain Layout
+			new_value = 0xffff;	
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	// wenn rechter taster gedrueckt wird
+\end_layout
+
+\begin_layout Plain Layout
+	if (P1IFG & TASTE_RECHTS) {
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(P1IFG, TASTE_RECHTS);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		// halbiere den aktuellen wert
+\end_layout
+
+\begin_layout Plain Layout
+		new_value = TBCCR0 / 2;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		// ueberpruefe untere grenze
+\end_layout
+
+\begin_layout Plain Layout
+		if (0 == new_value) {
+\end_layout
+
+\begin_layout Plain Layout
+			new_value = 1;
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// setze counter zurueck
+\end_layout
+
+\begin_layout Plain Layout
+	TBR = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+	// setze neuen zielwert
+\end_layout
+
+\begin_layout Plain Layout
+	TBCCR0 = new_value;
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Zeitmessung
+\end_layout
+
+\begin_layout Subsubsection
+Entwickeln Sie ein Programm, das die Zeit zwischen zwei Tastenbetätigungen
+ (P1.0 und P1.1) auf Basis des Timers B misst.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+static unsigned int cycles = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+.
+\end_layout
+
+\begin_layout Plain Layout
+.
+\end_layout
+
+\begin_layout Plain Layout
+.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// interrupt wird bei 0 ausgeloest
+\end_layout
+
+\begin_layout Plain Layout
+TBR = 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// waehle ACLK
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(TBCTL, TBSSEL0);
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(TBCTL, TBSSEL1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// setze divider auf 8
+ -> 4096 Hz
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(TBCTL, ID0 | ID1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// wahle count up mode
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(TBCTL, MC0);
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(TBCTL, MC1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// setze taktanzahl fuer eine sekunde
+\end_layout
+
+\begin_layout Plain Layout
+TBCCR0 = 0xffff;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+// loesche interrupt flag fuer timer
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(TBCCTL0, CCIFG);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(P1IES, TASTE_LINKS | TASTE_RECHTS); // LH an linker taste loest
+ interrupt aus
+\end_layout
+
+\begin_layout Plain Layout
+BIT_CLR(P1IFG, TASTE_LINKS | TASTE_RECHTS); // interrupt flag loeschen
+\end_layout
+
+\begin_layout Plain Layout
+BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); // interrupts fuer linke taste
+ erlauben
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = TIMERB0_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void TIMERB0(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	cycles++;
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = PORT1_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void PORT1(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	unsigned int tbr = TBR;
+\end_layout
+
+\begin_layout Plain Layout
+	unsigned int secs = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	unsigned int centi_secs = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	char buffer[16]; 
+\end_layout
+
+\begin_layout Plain Layout
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	// linker taster
+\end_layout
+
+\begin_layout Plain Layout
+	if (P1IFG & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+		// starte zeitmessung
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(P1IFG, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		cycles = 0;
+\end_layout
+
+\begin_layout Plain Layout
+		TBR = 1;	// interrupt wird ausgeloest bei 0
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// interrupt fuer timer freigeben
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_SET(TBCCTL0, CCIE);
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	// rechter taster
+\end_layout
+
+\begin_layout Plain Layout
+	if (P1IFG & TASTE_RECHTS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+		// stoppe zeitmessung
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(P1IFG, TASTE_RECHTS);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// interrupt fuer timer stoppen
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(TBCCTL0, CCIE);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		secs = cycles * 16 + tbr / 4096;
+\end_layout
+
+\begin_layout Plain Layout
+		centi_secs = (tbr % 4096) % 10;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		// ausgabe
+\end_layout
+
+\begin_layout Plain Layout
+		sprintf(buffer, "Zeit: %02d,%02d", secs, centi_secs);
+\end_layout
+
+\begin_layout Plain Layout
+		lcd_clear(WHITE);
+\end_layout
+
+\begin_layout Plain Layout
+		lcd_string(BLACK, 15, 25, buffer);	// Textausgabe
+\end_layout
+
+\begin_layout Plain Layout
+		lcd_paint();
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Zeitschalterk
+\end_layout
+
+\begin_layout Subsubsection
+Programmieren Sie eine Uhr, die ein Format der Form hh:mm:ss realisiert
+ und integrieren Sie eine Schaltfunktion für eine LED P4.2 (kleinste Zeiteinheit
+ ist die Sekunde).
+ Zwei Variablen (t1 und t2) dienen zum speichern der Schaltzeiten.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+static unsigned long t1 = 60*60*8 + 60*30 + 22;
+\end_layout
+
+\begin_layout Plain Layout
+
+static unsigned long t2 = 60*60*9 + 60*1 + 01;
+\end_layout
+
+\begin_layout Plain Layout
+
+static unsigned char hours = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+static unsigned char mins = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+static unsigned char secs = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// interrupt wird bei 0 ausgeloest
+\end_layout
+
+\begin_layout Plain Layout
+
+TBR = 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// waehle ACLK
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCTL, TBSSEL0);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(TBCTL, TBSSEL1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// setze divider auf 8
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCTL, ID0 | ID1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// wahle count up mode
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCTL, MC0);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(TBCTL, MC1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// setze taktanzahl fuer eine sekunde
+\end_layout
+
+\begin_layout Plain Layout
+
+TBCCR0 = 4096; // eine sekunde: takt=32000 / divider=8
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// loesche interrupt flag fuer timer
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(TBCCTL0, CCIFG);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IES, TASTE_LINKS | TASTE_RECHTS); // LH an linker taste loest
+ interrupt aus
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IFG, TASTE_LINKS | TASTE_RECHTS); // interrupt flag loeschen
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); // interrupts fuer linke taste
+ erlauben
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCCTL0, CCIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = TIMERB0_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void TIMERB0(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	char buffer[16];
+\end_layout
+
+\begin_layout Plain Layout
+
+	secs++;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// erhoehe sekundenzaehler und beruecksichtige ueberlauf
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (secs > 59) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		mins++;
+\end_layout
+
+\begin_layout Plain Layout
+
+		secs %= 60;
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (mins > 59) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			mins %= 60;
+\end_layout
+
+\begin_layout Plain Layout
+
+			hours++;
+\end_layout
+
+\begin_layout Plain Layout
+
+			if (hours > 23) {
+\end_layout
+
+\begin_layout Plain Layout
+
+				hours %= 24;	
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	// ueberpruefe schaltzeit 1
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (t1 == 60*60*(long)hours + 60*(long)mins + (long)secs) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_GELB);		
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	// ueberpruefe schaltzeit 2	
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (t2 == 60*60*(long)hours + 60*(long)mins + (long)secs) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	// ausgabe
+\end_layout
+
+\begin_layout Plain Layout
+
+	sprintf(buffer, "%02d:%02d:%02d", hours, mins, secs);
+\end_layout
+
+\begin_layout Plain Layout
+
+	lcd_clear(WHITE);
+\end_layout
+
+\begin_layout Plain Layout
+
+	lcd_string(BLACK, 15, 25, buffer);	// Textausgabe
+\end_layout
+
+\begin_layout Plain Layout
+
+	lcd_paint();
+\end_layout
+
+\begin_layout Plain Layout
+
+	LED_TOGGLE(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+LED als Indikator
+\end_layout
+
+\begin_layout Subsubsection
+6.4.1 Soll eine LED (P4.0) nur die Bereitschaft eines Controllers signalisieren,
+ ist es energetisch sinnvoll alle 5 Sekunden für die Zeit von 0,5 Sekunden
+ die LED einzuschalten.
+ Beispiele dafür sind Alarmanlagen, BT-GPS-Empfänger und Handys.
+\begin_inset Newline newline
+\end_inset
+
+Der Controller befindet sich bei dieser Aufgabe in einer Endlosschleife
+ im LPM3-Mode und wird durch den Timerinterrupt "aufgeweckt".
+\begin_inset Newline newline
+\end_inset
+
+Programmieren Sie den Timer B mit einem CCR0-Interrupt in der Form, dass
+ per ISR die LED im oben beschriebenen Rhythmus blinkt.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Finden Sie dabei eine Lösung, die es ihnen gestattet den Rhythmus relativ
+ einfach zu verändern.
+ Testen Sie das Programm mit dem Zyklus 3 Sekunden aus und 1 Sekunde an.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#define IS_LED_ON(led) (!(P4OUT & led))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define TIMER_INTERRUPT_MS 3000
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ON_MS 1000
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// interrupt wird bei 0 ausgeloest
+\end_layout
+
+\begin_layout Plain Layout
+
+TBR = 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// waehle ACLK
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCTL, TBSSEL0);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(TBCTL, TBSSEL1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// setze divider auf 8
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCTL, ID0 | ID1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// wahle count up mode
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCTL, MC0);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(TBCTL, MC1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// setze anzahl fuer interrupt
+\end_layout
+
+\begin_layout Plain Layout
+
+TBCCR0 = (4 * TIMER_INTERRUPT_MS); // eine sekunde: takt=32000 / divider=8
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// loesche interrupt flag fuer timer
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(TBCCTL0, CCIFG);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCCTL0, CCIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		LPM3;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = TIMERB0_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void TIMERB0(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (IS_LED_ON(LED_ROT)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		// setze counter fuer die zeit in der die LED aus sein soll
+\end_layout
+
+\begin_layout Plain Layout
+
+		TBCCR0 = (4 * TIMER_INTERRUPT_MS);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+	} else {
+\end_layout
+
+\begin_layout Plain Layout
+
+		// setze counter fuer die zeit in der die LED an sein soll
+\end_layout
+
+\begin_layout Plain Layout
+
+		TBCCR0 = (4 * LED_ON_MS);
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_ON(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Welche Batterienutzungsdauer wird für beide Blinkmodi erreicht, wenn eine
+ 1100mAh Batterie genutzt wird.
+ Es wird dabei vorausgesetzt, dass der Gesamtstromverbrauch des Controllerboards
+ bei 5mA (LED an) und bei 100µA (LED aus) liegt.
+ Zu welchem Ergebnis kommen Sie?
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $ $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+PWM
+\end_layout
+
+\begin_layout Subsubsection
+Machen Sie sich mit der Funktionsweise und der technischen Anwendung der
+ Pulsweitenmodulation vertraut.
+ Erklären Sie kurz die Funktionsweise der PWM-Ansteuerung für folgende technisch
+e Anwendungen:
+\begin_inset Newline newline
+\end_inset
+
+• Motorsteuerung
+\begin_inset Newline newline
+\end_inset
+
+• Ansteuerung bzw.
+ Dimmen von LED
+\end_layout
+
+\begin_layout Subsubsection
+Machen Sie sich mit dem Kapitel 12 aus dem MSP430 User's Guide vertraut.
+ Schauen Sie sich insbesondere den Punkt 12.2.5 im MSP430 User's Guide an.
+ Wählen Sie einen Ansteuerungsmode.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Nutzen Sie den Timer B und eine LED an der Portleitung P4.1, um einen PWM
+ Generator softwaretechnisch entsprechend A 6.5.2 umzusetzen.
+ Denken Sie daran, die entsprechenden P4SEL Bits zu Setzen.
+ Das System soll ohne Interrupts betrieben werden.
+\begin_inset Newline newline
+\end_inset
+
+In welchen Zeitbereichen für die Periodendauer T läßt sich eine PWM auf
+ Basis der ACLK-Taktquelle realisieren? Die Einstellungen können Sie einfach
+ im Debug Mode der Entwicklungsumgebung vornehmen.
+ Die Zeiten können Sie mit den vorhandenen Messgeräten (Counter bzw.
+ Oszi) bestimmen.
+\begin_inset Newline newline
+\end_inset
+
+Dimmen Sie die LED.
+ Die Periodendauer T sollte bei einer Frequenz oberhalb von 25 Hz liegen,
+ ansonsten wird das Ein- und Ausschalten der LED visuell wahrnehmbar.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

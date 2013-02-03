@@ -569,7 +569,53 @@ Erläutern Sie die Abläufe nach dem Starten des Programms im Detail und die
 \end_layout
 
 \begin_layout Standard
-Beim Starten des Programms...
+Beim Starten des Programms befindet sich der Mikrocontroller im normalen
+ Zustand.
+ Zunächst wird die durch das Programm spezifizierte Initialisierung durchgeführt
+ und danach wird schließlich die Endlosschleife ausgeführt.
+ Hier wird dann der LPM4-Befehl ausgeführt, sodass der Mikrocontroller diesen
+ Modus einnimmt.
+ Dies beinhaltet das Abschalten aller Clocks, was dazu führt, dass das Programm
+ 
+\begin_inset Quotes eld
+\end_inset
+
+pausiert
+\begin_inset Quotes erd
+\end_inset
+
+ wird.
+ Der Mikrocontroller befindet sich nun sozusagen im Schlafmodus.
+\end_layout
+
+\begin_layout Standard
+Wird nun der linke Taster gedrückt, löst dies den dazugehörigen Interrupt
+ aus.
+ In der Interruptserviceroutine wird der Mikrocontroller dann zunächst mit
+ dem Befehl LPM4_EXIT 
+\begin_inset Quotes eld
+\end_inset
+
+aufgeweckt
+\begin_inset Quotes erd
+\end_inset
+
+, also alle Clocks wieder aktiviert.
+\end_layout
+
+\begin_layout Standard
+Nachdem die Interruptserviceroutine abgearbeitet wurde, wird die Ausführung
+ der while-Schleife wieder aufgenommen.
+ Schließlich wird wieder der LPM4-Befehl ausgeführt, so dass der Mikrocontroller
+ wieder 
+\begin_inset Quotes eld
+\end_inset
+
+schlafen gelegt
+\begin_inset Quotes erd
+\end_inset
+
+ wird bis das nächste Mal der Taster gedrückt wird.
 \end_layout
 
 \begin_layout Standard
@@ -652,6 +698,334 @@ Der Taster an der Portleitung (P1.0) ersetzt uns den Sensor.
 lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
 inline false
 status open
+
+\begin_layout Plain Layout
+
+// P1.0 Input
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1DIR, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IES, TASTE_LINKS); // HL an linker taste loest interrupt aus
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IE, TASTE_LINKS);  // interrupts fuer linke taste erlauben
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IFG, TASTE_LINKS); // interrupt flag loeschen
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// takt ausgeben, zum debuggen
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P5SEL, 1 << 4);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P5DIR, 1 << 4);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		// LPM mode
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (0 == status) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LPM4;
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		// aktiver mode	
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (1 == status) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\end_layout
+
+\begin_layout Plain Layout
+
+			// ampelsequenz
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+			SLEEP(2);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+			SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+			SLEEP(2);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+			SLEEP(1);
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = PORT1_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void PORT1(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (P1IES & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			// high - low flanke aktiviert		
+\end_layout
+
+\begin_layout Plain Layout
+
+			status = 1;	// aktiver mode
+\end_layout
+
+\begin_layout Plain Layout
+
+			LPM4_EXIT;
+\end_layout
+
+\begin_layout Plain Layout
+
+			// setze interrupt fuer low - high
+\end_layout
+
+\begin_layout Plain Layout
+
+			BIT_CLR(P1IES, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+		} else {
+\end_layout
+
+\begin_layout Plain Layout
+
+			// low - high flanke aktiviert
+\end_layout
+
+\begin_layout Plain Layout
+
+			status = 0;	// low power mode
+\end_layout
+
+\begin_layout Plain Layout
+
+			// setze interrupt fuer high - low
+\end_layout
+
+\begin_layout Plain Layout
+
+			BIT_SET(P1IES, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(P1IFG, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
 
 \begin_layout Plain Layout
 
