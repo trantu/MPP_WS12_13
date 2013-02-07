@@ -1,0 +1,241 @@
+ID = 8, channel = 8
+
+keine Pakete für ID 2, 3
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 64
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 54
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 54
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 59
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 57
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 61
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 60
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 61
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 62
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 63
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 81
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 59
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 76
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 107
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 120
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 98
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 81
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 91
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 107
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 108
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 107
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 108
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 107
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 106
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 105
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 102
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 102
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 104
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 104
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 105
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 101
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 98
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 101
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
+
+Quelladresse= 18
+Zieladresse = 8
+RSSI = 99
+Paketlänge = 13
+
+Datenpaket = Hallo HWP08
