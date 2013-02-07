@@ -675,6 +675,868 @@ status open
 
 \begin_layout Plain Layout
 
+....
+\end_layout
+
+\begin_layout Plain Layout
+
+main(void);					//Haupprogramm
+\end_layout
+
+\begin_layout Plain Layout
+
+void print_value(void);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// status
+\end_layout
+
+\begin_layout Plain Layout
+
+enum {
+\end_layout
+
+\begin_layout Plain Layout
+
+	MODE_LPM4,
+\end_layout
+
+\begin_layout Plain Layout
+
+	MODE_ACTIVE
+\end_layout
+
+\begin_layout Plain Layout
+
+} status;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+int tick = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_SET(a,b) ((a) |= (b))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_CLR(a,b) ((a) &= ~(b))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_TOGGLE(a,b) ((a) ^= (b))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Hauptprogramm=======================================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+main(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier sollten Variablen deklariert werden ============================
+\end_layout
+
+\begin_layout Plain Layout
+
+	//unsigned char i = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+	//char text[60];
+\end_layout
+
+\begin_layout Plain Layout
+
+	//int x,y;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die notwendigen Initialisierungsschritte =======================
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(1)== Port-Initialisierung ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_Port();				// Initialisierung der Port Register
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+//(2)=== Clock-System-Initialisierung ====================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== XT2() oder Dco() als Taktquelle einstellen
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== durch Ein- oder Auskommentieren
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== DCO ist bei LPM Einsatz bevorzugt muß zyklisch kalibriert werden
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== XT2 ist quarzstabil muß nicht zyklisch kalibriert werden
+\end_layout
+
+\begin_layout Plain Layout
+
+	//  			
+\end_layout
+
+\begin_layout Plain Layout
+
+	//XT2 ();					// XT2 Taktquelle aktivieren mit 7.3728MHz
+\end_layout
+
+\begin_layout Plain Layout
+
+	DCO ();					// Dco Taktquelle aktivieren mit 7.3728MHz
+\end_layout
+
+\begin_layout Plain Layout
+
+	//						   beachte DELTA
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(3)== Timer-Initialisierung= ==========================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_Timer_A();			// Init Timer für Sekundeninterrupt
+\end_layout
+
+\begin_layout Plain Layout
+
+							// !! noch leere Funktion
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(4)== USART-Initialisierung ===========================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_UART1();			// UART-RS232 mit 115.2kBit/s initialisieren
+\end_layout
+
+\begin_layout Plain Layout
+
+							// !! noch leere Funktion
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(5)== CC1100-Transceiver-Initialisierung ==============================
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_UART0_SPI();		// CC1100 SPI UART initalisieren
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_CC1100_POWERDOWN();			// CC1100 init und in RX Mode setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+							// !!!Interrupte sind ab jetzt freigegeben!!
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== Adresse und Funkkanal des Transceivers setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== für die Arbeitsplaetze HWPx (x=1...10) sollten
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== ID=x und channnel=x gesetzt werden
+\end_layout
+
+\begin_layout Plain Layout
+
+	ID = 1;							// Adresse 
+\end_layout
+
+\begin_layout Plain Layout
+
+	setUid(ID);						// Adresse im Transceiver setzen 
+\end_layout
+
+\begin_layout Plain Layout
+
+	channel = 1; 					// Funkkanal  
+\end_layout
+
+\begin_layout Plain Layout
+
+	switchFreq(channel);			// Funkkanal im Transceiver setzen 
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== Soll der Transceiver genutzt werden müssen folgende zwei Zeilen  
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== auskommentiert werden: 
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_CC1100_IDLE();		// CC1100 in den IDLE Mode setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_CC1100_POWERDOWN();// CC1100 in den PowerDown Mode setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(6)== LCD-Display-Initialisierung =====================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	dogm_reset();		// Hardware Reset des LCD Controllers
+\end_layout
+
+\begin_layout Plain Layout
+
+	dogm_init();		// Initialisierung der LCD Controller Register
+\end_layout
+
+\begin_layout Plain Layout
+
+	lcd_clear(WHITE);	// Grafikspeicher auf dem MSP430 löschen
+\end_layout
+
+\begin_layout Plain Layout
+
+	//lcd_string(BLACK, 15, 25, "MSP430-GESTARTET!");	// Textausgabe
+\end_layout
+
+\begin_layout Plain Layout
+
+	lcd_paint();		// Grafikspeicher auf das LCD Display ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ROT (0x01)   // 0 0 1 P4.0
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_GELB (0x02)  // 0 1 0 P4.1
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_GRUEN (0x04) // 1 0 0 P4.2
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ALL (LED_ROT | LED_GELB | LED_GRUEN)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ON(led) (BIT_CLR(P4OUT, led)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_OFF(led) (BIT_SET(P4OUT, led)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_TOGGLE(led) (BIT_TOGGLE(P4OUT, led))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define IS_LED_ON(led) (!(P4OUT & led))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define TASTE_LINKS (0x1)
+\end_layout
+
+\begin_layout Plain Layout
+
+#define TASTE_RECHTS (0x2)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP_QUANTUM 10000
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP(n) do { 		/* sleep for n seconds */ 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	long time = n * 100000; /* wait() sleeps 10*n microseconds */ 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(time > SLEEP_QUANTUM) { 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		wait(SLEEP_QUANTUM); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		time -= SLEEP_QUANTUM; 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	} 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	wait(time); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+} while(0)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// P1.0 Input
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1DIR, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IES, TASTE_LINKS); // LH an linker taste loest interrupt aus
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(P1IE, TASTE_LINKS);  // interrupts fuer linke taste erlauben
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(P1IFG, TASTE_LINKS); // interrupt flag loeschen
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+status = MODE_LPM4;
+\end_layout
+
+\begin_layout Plain Layout
+
+tick = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		// LPM mode
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (MODE_LPM4 == status) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+			// disable watchdog interrupt
+\end_layout
+
+\begin_layout Plain Layout
+
+			BIT_CLR(IE1, WDTIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+			// stoppe watchdog
+\end_layout
+
+\begin_layout Plain Layout
+
+			WDTCTL = WDTPW + WDTHOLD; 
+\end_layout
+
+\begin_layout Plain Layout
+
+			LPM4;
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		// aktiver mode	
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (MODE_ACTIVE == status) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		// busy waiting bis taster losgelassen wird
+\end_layout
+
+\begin_layout Plain Layout
+
+		while (P1IN & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			if (tick > 2) {
+\end_layout
+
+\begin_layout Plain Layout
+
+				status = MODE_LPM4;
+\end_layout
+
+\begin_layout Plain Layout
+
+				break;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = PORT1_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void PORT1(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P1IFG & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		tick = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (MODE_LPM4 == status) {
+\end_layout
+
+\begin_layout Plain Layout
+
+			// zu aktivem modus wechseln
+\end_layout
+
+\begin_layout Plain Layout
+
+			status = MODE_ACTIVE;
+\end_layout
+
+\begin_layout Plain Layout
+
+			LPM4_EXIT;
+\end_layout
+
+\begin_layout Plain Layout
+
+			// watchdog programmieren
+\end_layout
+
+\begin_layout Plain Layout
+
+			// passwort, clear counter, clock source: ACLK , interval timer mode
+\end_layout
+
+\begin_layout Plain Layout
+
+			// implizit: timer interval 32768 -> 1s
+\end_layout
+
+\begin_layout Plain Layout
+
+			WDTCTL = WDTPW + WDTCNTCL + WDTSSEL + WDTTMSEL;
+\end_layout
+
+\begin_layout Plain Layout
+
+			// enable interrupt
+\end_layout
+
+\begin_layout Plain Layout
+
+			BIT_SET(IE1, WDTIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		BIT_CLR(P1IFG, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = WDT_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void WDT(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	tick++;
+\end_layout
+
+\begin_layout Plain Layout
+
+	LED_TOGGLE(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+	// nach einer minute automatisch in schlafmodus wechseln
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (MODE_ACTIVE == status && tick > 60) {
+\end_layout
+
+\begin_layout Plain Layout
+
+		status = MODE_LPM4;
+\end_layout
+
+\begin_layout Plain Layout
+
+		LED_OFF(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+...
 \end_layout
 
 \end_inset
