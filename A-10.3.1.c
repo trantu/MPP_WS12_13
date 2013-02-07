@@ -23,6 +23,8 @@
 main(void);					//Haupprogramm
 void print_value(void);
 
+char buffer[16];
+
 #define BIT_SET(a,b) ((a) |= (b))
 #define BIT_CLR(a,b) ((a) &= ~(b))
 #define BIT_TOGGLE(a,b) ((a) ^= (b))
@@ -119,7 +121,7 @@ main(void)
 	BIT_CLR(TBCTL, MC1);
 	
 	// setze anzahl fuer 100Hz Trigger
-	TBCCR0 = 327; // 32.7kHz: takt=32_768 / 100 = count to 32
+	TBCCR0 = 327; // 32.7kHz: takt=32_768 / 100 = count to 327
 	//TBR = 1;
 	
 	// loesche interrupt flag fuer timer
@@ -137,11 +139,11 @@ main(void)
 	
 	// DMA konfigurieren
 	DMA2SZ = 100;
-	DMA2SA = (unsigned int)&ADC12MEM0; // speichere die Addresse des ADC Register
-	DMA2DA = (unsigned int)values; // und die unserer Werte
-	DMACTL0 = DMA2TSEL2 + DMA2TSEL1; // Trigger kommt vom ADC
+	DMA2SA = (unsigned int)&ADC12MEM0;	// speichere die Addresse des ADC Register
+	DMA2DA = (unsigned int)values;		// und die unserer Werte
+	DMACTL0 = DMA2TSEL2 + DMA2TSEL1;	// Trigger kommt vom ADC
 	// kopiere 1 Word aus dem ADC Register und erhoehe dst um eins
-	DMA2CTL = DMAEN + DMADSTINCR0 + DMADSTINCR1;
+	DMA2CTL = DMADT2 + DMAEN + DMADSTINCR0 + DMADSTINCR1;
 	
 	// Bescheid sagen, wenn der Transfer fertig ist
 	BIT_CLR(DMA2CTL, DMAIFG);
@@ -153,6 +155,7 @@ main(void)
 //===Hier die Endlosschleife quasi das Betriebssystem=====================
 
 while(1){
+	LPM3;
 }	// Ende der Endlosschleife
 }	// Ende Main
 //====Ende des Hauptprogramms ============================================
@@ -160,29 +163,56 @@ while(1){
 #pragma vector = DACDMA_VECTOR
 __interrupt void DMA(void)
 {
-	double val = 0.0;
-	int i;
-	char buffer[16];
-
-	LED_ON(LED_ROT);
+	// fuer synchronisierung des transfers
+	static unsigned char transfer_done = 1;
 	
-	for (i = 0; i < 100; i++) {
-		double this = values[i];
+	// starte keinen neuen transfer bis aktueller transfer fertig
+	if ((DMA2CTL & DMAIFG) && transfer_done) {
+		// wandlung fertig
+		double val = 0.0;
+		int i;
 		
-		this /= 4096.0f; // Wertbreite
-		this *= 3.3f; // Referenzspannung
+		transfer_done = 0;
 		
-		val += this/100.0f;
-	}
+		BIT_CLR(DMA2CTL, DMAIFG);
+	
+		LED_ON(LED_ROT);
+		
+		for (i = 0; i < 100; i++) {
+			double this = values[i];
+			
+			this /= 4096.0f;	// Wertbreite
+			this *= 3.3f;		// Referenzspannung
+			
+			val += this/100.0f;
+		}
+	
+		sprintf(buffer, "U=%.2f V\r\n", val);
+		
+		// konfigurieren DMA fuer uart transfer
+		
+		// USART konfigurieren		
+		BIT_CLR(IFG2, UTXIFG1);	// interrupt flag loeschen
+		BIT_CLR(IE2, UTXIE1);	// interrupt ausschaulten
+		
+		// DMA konfigurieren
+		DMA1SZ = strlen(buffer);
+		DMA1DA = (unsigned int)&U1TXBUF; // speichere die Addresse des TX Buffers
+		DMA1SA = (unsigned int)buffer; // und die von unserem String
+		BIT_SET(DMACTL0, DMA1TSEL3 + DMA1TSEL1); // Trigger wenn TX IFG gestezt ist
+		// kopiere 1 Byte vom String ins TX Buffer bei jedem Transfer und erhoehe src um eins
+		DMA1CTL = DMAEN + DMASRCINCR0 + DMASRCINCR1 + DMADSTBYTE + DMASRCBYTE;
 
-	sprintf(buffer, "U=%.2f V", val);
-	lcd_clear(WHITE);
-	lcd_string(BLACK, 15, 25, buffer);
-	lcd_paint();
-	BIT_CLR(DMA2CTL, DMAIFG);
-	LED_OFF(LED_ROT);
-	//Problem: Es wird nur einmal aufgerufen
-	DMA2CTL |= DMAEN;
-	BIT_CLR(ADC12IFG, 1);
-	//ADC12CTL0 |= ADC12SC;
+		// Bescheid sagen, wenn der Transfer fertig ist
+		BIT_CLR(DMA1CTL, DMAIFG);
+		DMA1CTL += DMAIE;
+
+		BIT_SET(IFG2, UTXIFG1); // starte den ersten Transfer
+		
+	} else if (DMA1CTL & DMAIFG) {
+		// uart transfer fertig
+		transfer_done = 1;
+		BIT_CLR(DMA1CTL, DMAIFG);
+		LED_OFF(LED_ROT);
+	}
 }
