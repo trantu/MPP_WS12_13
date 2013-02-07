@@ -1,0 +1,3 @@
+Zusätzlich zum an- und ausschalten der roten LED fügen wir ein BIT_SET(P1OUT, BIT2) und BIT_CLR(P1OUT, BIT2) ein.
+
+Messung (Berechnung und Übertragung): 22,2 ms
