@@ -1,0 +1,1110 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\rightmargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Mikroprozessorpraktikum WS 12/13
+\end_layout
+
+\begin_layout Author
+Carlos Martín Nieto, Simon Hohberg, Tu Tran
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{section}{6}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+USART
+\end_layout
+
+\begin_layout Subsection
+UART Senden
+\end_layout
+
+\begin_layout Subsubsection
+Folgende Vorgaben für die Initialisierung der UART zur Lösung der Aufgabe:
+\begin_inset Newline newline
+\end_inset
+
+• UART1 an den Portleitungen P3.6 (TxD) und P3.7 (RxD) wird genutzt
+\begin_inset Newline newline
+\end_inset
+
+• Controller arbeitet mit 7,3728MHz DCOCLK-Takt
+\begin_inset Newline newline
+\end_inset
+
+• SMCLK-Taktquelle für Baudratengenerator
+\begin_inset Newline newline
+\end_inset
+
+• Datenübertragungsrate 115200 Bit/sek
+\begin_inset Newline newline
+\end_inset
+
+• Datenformat ist 8,N,1
+\begin_inset Newline newline
+\end_inset
+
+• Initialisierung der UART erfolgt mit der init_UART1() aus init.c
+\begin_inset Newline newline
+\end_inset
+
+Die Funktion init_UART1() aus init.c ist entsprechend den Vorgaben zu vervollstän
+digen.
+ Testen Sie die Richtigkeit der Initialisierung, indem Sie ein Zeichen in
+ das U1TXBUF-Register schreiben.
+\end_layout
+
+\begin_layout Standard
+Siehe 7.1.2!
+\end_layout
+
+\begin_layout Subsubsection
+Entwickeln Sie ein kleines Programm, welches aus Tastendruck P1.0 das Zeichen
+ "?" über die UART zum PC schickt.
+ Auf dem PC muß zum Empfang des Zeichens ein Terminalprogramm mit den entspreche
+nden Parametern gestartet werden.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+// init.c
+\end_layout
+
+\begin_layout Plain Layout
+void init_UART1(void)
+\end_layout
+
+\begin_layout Plain Layout
+  {
+\end_layout
+
+\begin_layout Plain Layout
+	//	P3SEL .....;			// USART RX und TX dem Modul zuweisen
+\end_layout
+
+\begin_layout Plain Layout
+	P3SEL = BIT6 | BIT7;
+\end_layout
+
+\begin_layout Plain Layout
+	//	U1CTL .....; 			// Reset
+\end_layout
+
+\begin_layout Plain Layout
+	U1CTL = SWRST;
+\end_layout
+
+\begin_layout Plain Layout
+	//	U1CTL .....; 			// Format 8N1
+\end_layout
+
+\begin_layout Plain Layout
+	U1CTL |= CHAR; // 8 Bits Daten, keine Paritaet und 1-Bit Stop ist default
+\end_layout
+
+\begin_layout Plain Layout
+	//	U1TCTL.....;			// Taktquelle SMCLK
+\end_layout
+
+\begin_layout Plain Layout
+	U1TCTL |= SSEL0 + SSEL1; // Taktquelle SMCLK
+\end_layout
+
+\begin_layout Plain Layout
+	//	U1BR0 .....;  			// Teiler Low-Teil, da 7372800/64 ca.
+ 115200
+\end_layout
+
+\begin_layout Plain Layout
+	U1BR0 = 64; //7372800/64 ca.
+ 115200
+\end_layout
+
+\begin_layout Plain Layout
+	U1BR1 = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	//	U1BR1 .....;			// Teiler High-Teil
+\end_layout
+
+\begin_layout Plain Layout
+	//	U1MCTL ....; 			// Modulationskontrolle
+\end_layout
+
+\begin_layout Plain Layout
+	U1MCTL = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	//	ME2 .......;			// Enable USART1 TXD/RXD
+\end_layout
+
+\begin_layout Plain Layout
+	ME2 = BIT5 + BIT4;
+\end_layout
+
+\begin_layout Plain Layout
+	//	U1CTL .....;	 		// Reset
+\end_layout
+
+\begin_layout Plain Layout
+	U1CTL &= ~SWRST;
+\end_layout
+
+\begin_layout Plain Layout
+	//	IE2 .......;			// Enable Interrupt
+\end_layout
+
+\begin_layout Plain Layout
+	//IE2 = BIT5 + BIT4;
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+  
+\end_layout
+
+\begin_layout Plain Layout
+  //main.c
+\end_layout
+
+\begin_layout Plain Layout
+  BIT_CLR(P1DIR, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\lang english
+BIT_SET(P1IES, TASTE_LINKS); // HL an linker taste loest interrupt aus
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\lang english
+BIT_SET(P1IE, TASTE_LINKS); // interrupts fuer linke taste erlauben
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\lang english
+BIT_CLR(P1IFG, TASTE_LINKS); // interrupt flag loeschen
+\end_layout
+
+\begin_layout Plain Layout
+_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+}		// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = PORT1_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void PORT1(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	if (P1IFG & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(P1IFG, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+		U1TXBUF = '?';
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Schicken Sie bei jedem Tastendruck eine Zeichenkette "Hallo World" zum PC.
+\end_layout
+
+\begin_layout Standard
+Initialisierung wie oben.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+void print_buf(const char *str)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+  do {
+\end_layout
+
+\begin_layout Plain Layout
+		U1TXBUF = *str;
+\end_layout
+
+\begin_layout Plain Layout
+		/*
+\end_layout
+
+\begin_layout Plain Layout
+		 * (115200 / 8)**-1 = 70us pro Zeichen
+\end_layout
+
+\begin_layout Plain Layout
+		 */
+\end_layout
+
+\begin_layout Plain Layout
+		wait(7);
+\end_layout
+
+\begin_layout Plain Layout
+	} while(*str++);
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = PORT1_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void PORT1(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	if (P1IFG & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(P1IFG, TASTE_LINKS);
+\end_layout
+
+\begin_layout Plain Layout
+		print_buf("Hallo World
+\backslash
+r
+\backslash
+n");		
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+UART Empfang
+\end_layout
+
+\begin_layout Subsubsection
+Initialisieren Sie die USART1 so, daß ein empfangenes Zeichen einen Interrupt
+ auslöst.
+ In der ISR der USART1 soll folgendes realisiert werden:
+\begin_inset Newline newline
+\end_inset
+
+• wird das Zeichen E empfangen, schaltet LED P4.1 ein
+\begin_inset Newline newline
+\end_inset
+
+• wird das Zeichen A empfangen, schaltet LED P4.1 aus
+\begin_inset Newline newline
+\end_inset
+
+• wird das /CR Zeichen empfangen, toggelt LED P4.2
+\begin_inset Newline newline
+\end_inset
+
+In der interrupts.c sollte die entsprechende ISR für die USART1RX eingefügt
+ werden.
+\end_layout
+
+\begin_layout Standard
+Initialisierung wie oben.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+#pragma vector = USART1RX_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void USART1RX(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+  
+  
+\lang english
+char c = U1RXBUF;
+\end_layout
+
+\begin_layout Plain Layout
+	BIT_CLR(IFG2, URXIFG1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+	if (c == 'E')
+\end_layout
+
+\begin_layout Plain Layout
+		LED_ON(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+	else if (c == 'A')
+\end_layout
+
+\begin_layout Plain Layout
+		LED_OFF(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+	else if (c == '
+\backslash
+r')
+\end_layout
+
+\begin_layout Plain Layout
+		LED_TOGGLE(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+...
+\end_layout
+
+\begin_layout Plain Layout
+void init_UART1(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	...
+\end_layout
+
+\begin_layout Plain Layout
+	//	IE2 .......;			// Enable Interrupt
+\end_layout
+
+\begin_layout Plain Layout
+	IE2 = BIT4;
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Über ein Terminalprogramm am PC soll eine Zeichenkette eingegeben und mit
+ CR+LF abgeschlossen werden.
+ Das Terminalprogramm überträgt die Zeichenkette zum Controller.
+ Dieser soll die Zeichenkette (Zeichen für Zeichen) im Interrupt empfangen,
+ die Länge der Zeichenkette bestimmen und zum PC zurückschicken.
+ Die empfangene Zeichenkette soll auf dem LCD-Display angezeigt werden.
+\end_layout
+
+\begin_layout Standard
+Initialisierung wie oben.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+void print_buf(const char *str)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	do {
+\end_layout
+
+\begin_layout Plain Layout
+
+		U1TXBUF = *str;
+\end_layout
+
+\begin_layout Plain Layout
+
+		/*
+\end_layout
+
+\begin_layout Plain Layout
+
+		* (115200 / 8)**-1 = 70us pro Zeichen
+\end_layout
+
+\begin_layout Plain Layout
+
+		*/
+\end_layout
+
+\begin_layout Plain Layout
+
+		wait(7);
+\end_layout
+
+\begin_layout Plain Layout
+
+	} while(*str++);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+static int len = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = USART1RX_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void USART1RX(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	char c = U1RXBUF;
+\end_layout
+
+\begin_layout Plain Layout
+
+	char str[14] = {0};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (c == '
+\backslash
+r') {
+\end_layout
+
+\begin_layout Plain Layout
+
+		snprintf(str, sizeof(str)-1, "%d
+\backslash
+r
+\backslash
+n", len);
+\end_layout
+
+\begin_layout Plain Layout
+
+		print_buf(str);
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_clear(WHITE);
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_paint();
+\end_layout
+
+\begin_layout Plain Layout
+
+		len = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+	} else {
+\end_layout
+
+\begin_layout Plain Layout
+
+		str[0] = c;
+\end_layout
+
+\begin_layout Plain Layout
+
+		str[1] = '
+\backslash
+0';
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_string(BLACK, (len % 21)*6, (len / 21)*9, str);
+\end_layout
+
+\begin_layout Plain Layout
+
+		lcd_paint();
+\end_layout
+
+\begin_layout Plain Layout
+
+		len++;
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Sensordaten
+\end_layout
+
+\begin_layout Subsubsection
+Entwickeln Sie ein Programm das zyklisch die Uhrzeit und die Werte des SHT11-
+ Sensors als ASCII-Zeichenkette auf der seriellen Schnittstelle ausgibt
+ und in geeigneter Form parallel dazu auf dem LCD-Display darstellt.
+\end_layout
+
+\begin_layout Standard
+Initialisierung wie oben.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+static unsigned char hours = 0;
+\end_layout
+
+\begin_layout Plain Layout
+static unsigned char mins = 0;
+\end_layout
+
+\begin_layout Plain Layout
+static unsigned char secs = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+void print_buf(const char *str)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	do {
+\end_layout
+
+\begin_layout Plain Layout
+		U1TXBUF = *str;
+\end_layout
+
+\begin_layout Plain Layout
+		/*
+\end_layout
+
+\begin_layout Plain Layout
+		* (115200 / 8)**-1 = 70us pro Zeichen
+\end_layout
+
+\begin_layout Plain Layout
+		*/
+\end_layout
+
+\begin_layout Plain Layout
+		wait(7);
+\end_layout
+
+\begin_layout Plain Layout
+	} while(*str++);
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = TIMERB0_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void TIMERB0(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+  char buffer[16];
+\end_layout
+
+\begin_layout Plain Layout
+	secs++;
+\end_layout
+
+\begin_layout Plain Layout
+
+    // Sekundenueberlauf
+\end_layout
+
+\begin_layout Plain Layout
+	if (secs > 59) {
+\end_layout
+
+\begin_layout Plain Layout
+		mins++;
+\end_layout
+
+\begin_layout Plain Layout
+		secs %= 60;
+\end_layout
+
+\begin_layout Plain Layout
+
+        // Minutenueberlauf
+\end_layout
+
+\begin_layout Plain Layout
+		if (mins > 59) {
+\end_layout
+
+\begin_layout Plain Layout
+			mins %= 60;
+\end_layout
+
+\begin_layout Plain Layout
+			hours++;
+\end_layout
+
+\begin_layout Plain Layout
+
+            // Stundenueberlauf
+\end_layout
+
+\begin_layout Plain Layout
+			if (hours > 23) {
+\end_layout
+
+\begin_layout Plain Layout
+				hours %= 24;	
+\end_layout
+
+\begin_layout Plain Layout
+			}
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+	SHT11_Read_Sensor();
+\end_layout
+
+\begin_layout Plain Layout
+	print_buf(temp_char);
+\end_layout
+
+\begin_layout Plain Layout
+	print_buf(humi_char);
+\end_layout
+
+\begin_layout Plain Layout
+	sprintf(buffer, " %02d:%02d:%02d
+\backslash
+r
+\backslash
+n", hours, mins, secs);
+\end_layout
+
+\begin_layout Plain Layout
+	print_buf(buffer);
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Ausgabe:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,extendedchars=true,frame=single,language=sh,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+T= 25.72°C,F=32.7% 15:39:51
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 25.72°C,F=32.5% 15:39:52
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 25.72°C,F=31.7% 15:39:53
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 25.74°C,F=31.2% 15:39:54
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 25.83°C,F=31.8% 15:39:55
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.12°C,F=37.0% 15:39:56
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.35°C,F=45.0% 15:39:57
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.84°C,F=53.1% 15:39:58
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.94°C,F=60.2% 15:39:59
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.83°C,F=66.0% 15:40:00
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.69°C,F=69.4% 15:40:01
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.62°C,F=71.1% 15:40:02
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.63°C,F=72.2% 15:40:03
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.60°C,F=73.1% 15:40:04
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.53°C,F=73.3% 15:40:05
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.45°C,F=73.7% 15:40:06
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.36°C,F=72.3% 15:40:07
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.29°C,F=68.3% 15:40:08
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.25°C,F=64.2% 15:40:09
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.22°C,F=60.4% 15:40:10
+\end_layout
+
+\begin_layout Plain Layout
+
+T= 26.20°C,F=57.7% 15:40:11
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_body
+\end_document
