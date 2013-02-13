@@ -108,6 +108,7 @@ inline false
 status open
 
 \begin_layout Plain Layout
+
 TBR = 0;
 \end_layout
 
@@ -116,14 +117,17 @@ TBR = 0;
 \end_layout
 
 \begin_layout Plain Layout
+
 // waehle ACLK
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(TBCTL, TBSSEL0);
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(TBCTL, TBSSEL1);
 \end_layout
 
@@ -132,14 +136,17 @@ BIT_CLR(TBCTL, TBSSEL1);
 \end_layout
 
 \begin_layout Plain Layout
+
 // wahle count up mode
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(TBCTL, MC0);
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(TBCTL, MC1);
 \end_layout
 
@@ -148,10 +155,12 @@ BIT_CLR(TBCTL, MC1);
 \end_layout
 
 \begin_layout Plain Layout
+
 // setze taktanzahl fuer eine sekunde
 \end_layout
 
 \begin_layout Plain Layout
+
 TBCCR0 = 32769;
 \end_layout
 
@@ -160,10 +169,12 @@ TBCCR0 = 32769;
 \end_layout
 
 \begin_layout Plain Layout
+
 // loesche interrupt flag
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(TBCCTL0, CCIFG);
 \end_layout
 
@@ -172,10 +183,12 @@ BIT_CLR(TBCCTL0, CCIFG);
 \end_layout
 
 \begin_layout Plain Layout
+
 // interrupt freigeben
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(TBCCTL0, CCIE);
 \end_layout
 
@@ -184,6 +197,7 @@ BIT_SET(TBCCTL0, CCIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 LED_OFF(LED_ALL);
 \end_layout
 
@@ -192,6 +206,7 @@ LED_OFF(LED_ALL);
 \end_layout
 
 \begin_layout Plain Layout
+
 _bis_SR_register(GIE);
 \end_layout
 
@@ -200,26 +215,32 @@ _bis_SR_register(GIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 //===Hier die Endlosschleife quasi das Betriebssystem=====================
 \end_layout
 
 \begin_layout Plain Layout
+
   while(1){
 \end_layout
 
 \begin_layout Plain Layout
+
 		
 \end_layout
 
 \begin_layout Plain Layout
+
 	}	// Ende der Endlosschleife
 \end_layout
 
 \begin_layout Plain Layout
+
 }		// Ende Main
 \end_layout
 
 \begin_layout Plain Layout
+
 //====Ende des Hauptprogramms ============================================
 \end_layout
 
@@ -228,14 +249,17 @@ _bis_SR_register(GIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 #pragma vector = TIMERB0_VECTOR
 \end_layout
 
 \begin_layout Plain Layout
+
 __interrupt void TIMERB0(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 {
 \end_layout
 
@@ -245,18 +269,22 @@ __interrupt void TIMERB0(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 	LED_TOGGLE(LED_ROT);
 \end_layout
 
 \begin_layout Plain Layout
+
 	
 \end_layout
 
 \begin_layout Plain Layout
+
 	BIT_CLR(TBCCTL0, CCIFG);
 \end_layout
 
 \begin_layout Plain Layout
+
 }
 \end_layout
 
@@ -305,6 +333,7 @@ inline false
 status open
 
 \begin_layout Plain Layout
+
 TBR = 0;
 \end_layout
 
@@ -313,14 +342,17 @@ TBR = 0;
 \end_layout
 
 \begin_layout Plain Layout
+
 // waehle ACLK
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(TBCTL, TBSSEL0);
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(TBCTL, TBSSEL1);
 \end_layout
 
@@ -329,14 +361,17 @@ BIT_CLR(TBCTL, TBSSEL1);
 \end_layout
 
 \begin_layout Plain Layout
+
 // wahle count up mode
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(TBCTL, MC0);
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(TBCTL, MC1);
 \end_layout
 
@@ -345,10 +380,12 @@ BIT_CLR(TBCTL, MC1);
 \end_layout
 
 \begin_layout Plain Layout
+
 // setze taktanzahl fuer eine sekunde
 \end_layout
 
 \begin_layout Plain Layout
+
 TBCCR0 = 32769;
 \end_layout
 
@@ -357,10 +394,12 @@ TBCCR0 = 32769;
 \end_layout
 
 \begin_layout Plain Layout
+
 // loesche interrupt flag fuer timer
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(TBCCTL0, CCIFG);
 \end_layout
 
@@ -369,15 +408,18 @@ BIT_CLR(TBCCTL0, CCIFG);
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(P1IES, TASTE_LINKS | TASTE_RECHTS); // LH an linker taste loest
  interrupt aus
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(P1IFG, TASTE_LINKS | TASTE_RECHTS); // interrupt flag loeschen
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); // interrupts fuer linke taste
  erlauben
 \end_layout
@@ -387,10 +429,12 @@ BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); // interrupts fuer linke taste
 \end_layout
 
 \begin_layout Plain Layout
+
 // interrupt fuer timer freigeben
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(TBCCTL0, CCIE);
 \end_layout
 
@@ -399,6 +443,7 @@ BIT_SET(TBCCTL0, CCIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 LED_OFF(LED_ALL);
 \end_layout
 
@@ -407,6 +452,7 @@ LED_OFF(LED_ALL);
 \end_layout
 
 \begin_layout Plain Layout
+
 _bis_SR_register(GIE);
 \end_layout
 
@@ -415,26 +461,32 @@ _bis_SR_register(GIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 //===Hier die Endlosschleife quasi das Betriebssystem=====================
 \end_layout
 
 \begin_layout Plain Layout
+
   while(1){
 \end_layout
 
 \begin_layout Plain Layout
+
 		
 \end_layout
 
 \begin_layout Plain Layout
+
 	}	// Ende der Endlosschleife
 \end_layout
 
 \begin_layout Plain Layout
+
 }		// Ende Main
 \end_layout
 
 \begin_layout Plain Layout
+
 //====Ende des Hauptprogramms ============================================
 \end_layout
 
@@ -443,26 +495,32 @@ _bis_SR_register(GIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 #pragma vector = TIMERB0_VECTOR
 \end_layout
 
 \begin_layout Plain Layout
+
 __interrupt void TIMERB0(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 {
 \end_layout
 
 \begin_layout Plain Layout
+
 	LED_TOGGLE(LED_ROT);
 \end_layout
 
 \begin_layout Plain Layout
+
 	
 \end_layout
 
 \begin_layout Plain Layout
+
 }
 \end_layout
 
@@ -471,22 +529,27 @@ __interrupt void TIMERB0(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 #pragma vector = PORT1_VECTOR
 \end_layout
 
 \begin_layout Plain Layout
+
 __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 {
 \end_layout
 
 \begin_layout Plain Layout
+
 	unsigned long new_value = 0;
 \end_layout
 
 \begin_layout Plain Layout
+
 	
 \end_layout
 
@@ -496,10 +559,12 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 	if (P1IFG & TASTE_LINKS) {
 \end_layout
 
 \begin_layout Plain Layout
+
 		BIT_CLR(P1IFG, TASTE_LINKS);
 \end_layout
 
@@ -513,6 +578,7 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 		new_value = (long)TBCCR0 * (long)2;
 \end_layout
 
@@ -526,22 +592,27 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 		if (new_value > 0xffff) {
 \end_layout
 
 \begin_layout Plain Layout
+
 			new_value = 0xffff;	
 \end_layout
 
 \begin_layout Plain Layout
+
 		}
 \end_layout
 
 \begin_layout Plain Layout
+
 	}
 \end_layout
 
 \begin_layout Plain Layout
+
 	
 \end_layout
 
@@ -551,10 +622,12 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 	if (P1IFG & TASTE_RECHTS) {
 \end_layout
 
 \begin_layout Plain Layout
+
 		BIT_CLR(P1IFG, TASTE_RECHTS);
 \end_layout
 
@@ -568,6 +641,7 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 		new_value = TBCCR0 / 2;
 \end_layout
 
@@ -581,18 +655,22 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 		if (0 == new_value) {
 \end_layout
 
 \begin_layout Plain Layout
+
 			new_value = 1;
 \end_layout
 
 \begin_layout Plain Layout
+
 		}
 \end_layout
 
 \begin_layout Plain Layout
+
 	}
 \end_layout
 
@@ -606,6 +684,7 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 	TBR = 0;
 \end_layout
 
@@ -615,10 +694,12 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 	TBCCR0 = new_value;
 \end_layout
 
 \begin_layout Plain Layout
+
 }
 \end_layout
 
@@ -647,6 +728,7 @@ inline false
 status open
 
 \begin_layout Plain Layout
+
 static unsigned int cycles = 0;
 \end_layout
 
@@ -655,26 +737,31 @@ static unsigned int cycles = 0;
 \end_layout
 
 \begin_layout Plain Layout
-.
-\end_layout
 
-\begin_layout Plain Layout
-.
-\end_layout
-
-\begin_layout Plain Layout
 .
 \end_layout
 
 \begin_layout Plain Layout
 
+.
 \end_layout
 
 \begin_layout Plain Layout
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
 // interrupt wird bei 0 ausgeloest
 \end_layout
 
 \begin_layout Plain Layout
+
 TBR = 1;
 \end_layout
 
@@ -683,14 +770,17 @@ TBR = 1;
 \end_layout
 
 \begin_layout Plain Layout
+
 // waehle ACLK
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(TBCTL, TBSSEL0);
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(TBCTL, TBSSEL1);
 \end_layout
 
@@ -699,11 +789,12 @@ BIT_CLR(TBCTL, TBSSEL1);
 \end_layout
 
 \begin_layout Plain Layout
-// setze divider auf 8
- -> 4096 Hz
+
+// setze divider auf 8 -> 4096 Hz
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(TBCTL, ID0 | ID1);
 \end_layout
 
@@ -712,14 +803,17 @@ BIT_SET(TBCTL, ID0 | ID1);
 \end_layout
 
 \begin_layout Plain Layout
+
 // wahle count up mode
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(TBCTL, MC0);
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(TBCTL, MC1);
 \end_layout
 
@@ -728,10 +822,12 @@ BIT_CLR(TBCTL, MC1);
 \end_layout
 
 \begin_layout Plain Layout
+
 // setze taktanzahl fuer eine sekunde
 \end_layout
 
 \begin_layout Plain Layout
+
 TBCCR0 = 0xffff;
 \end_layout
 
@@ -740,10 +836,12 @@ TBCCR0 = 0xffff;
 \end_layout
 
 \begin_layout Plain Layout
+
 // loesche interrupt flag fuer timer
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(TBCCTL0, CCIFG);
 \end_layout
 
@@ -752,15 +850,18 @@ BIT_CLR(TBCCTL0, CCIFG);
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(P1IES, TASTE_LINKS | TASTE_RECHTS); // LH an linker taste loest
  interrupt aus
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_CLR(P1IFG, TASTE_LINKS | TASTE_RECHTS); // interrupt flag loeschen
 \end_layout
 
 \begin_layout Plain Layout
+
 BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); // interrupts fuer linke taste
  erlauben
 \end_layout
@@ -770,6 +871,7 @@ BIT_SET(P1IE, TASTE_LINKS | TASTE_RECHTS); // interrupts fuer linke taste
 \end_layout
 
 \begin_layout Plain Layout
+
 LED_OFF(LED_ALL);
 \end_layout
 
@@ -778,6 +880,7 @@ LED_OFF(LED_ALL);
 \end_layout
 
 \begin_layout Plain Layout
+
 _bis_SR_register(GIE);
 \end_layout
 
@@ -786,26 +889,32 @@ _bis_SR_register(GIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 //===Hier die Endlosschleife quasi das Betriebssystem=====================
 \end_layout
 
 \begin_layout Plain Layout
+
   while(1){
 \end_layout
 
 \begin_layout Plain Layout
+
 		
 \end_layout
 
 \begin_layout Plain Layout
+
 	}	// Ende der Endlosschleife
 \end_layout
 
 \begin_layout Plain Layout
+
 }		// Ende Main
 \end_layout
 
 \begin_layout Plain Layout
+
 //====Ende des Hauptprogramms ============================================
 \end_layout
 
@@ -814,22 +923,27 @@ _bis_SR_register(GIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 #pragma vector = TIMERB0_VECTOR
 \end_layout
 
 \begin_layout Plain Layout
+
 __interrupt void TIMERB0(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 {
 \end_layout
 
 \begin_layout Plain Layout
+
 	cycles++;
 \end_layout
 
 \begin_layout Plain Layout
+
 }
 \end_layout
 
@@ -838,34 +952,42 @@ __interrupt void TIMERB0(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 #pragma vector = PORT1_VECTOR
 \end_layout
 
 \begin_layout Plain Layout
+
 __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 {
 \end_layout
 
 \begin_layout Plain Layout
+
 	unsigned int tbr = TBR;
 \end_layout
 
 \begin_layout Plain Layout
+
 	unsigned int secs = 0;
 \end_layout
 
 \begin_layout Plain Layout
+
 	unsigned int centi_secs = 0;
 \end_layout
 
 \begin_layout Plain Layout
+
 	char buffer[16]; 
 \end_layout
 
 \begin_layout Plain Layout
+
 	
 \end_layout
 
@@ -875,6 +997,7 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 	if (P1IFG & TASTE_LINKS) {
 \end_layout
 
@@ -883,42 +1006,52 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 		// starte zeitmessung
 \end_layout
 
 \begin_layout Plain Layout
+
 		BIT_CLR(P1IFG, TASTE_LINKS);
 \end_layout
 
 \begin_layout Plain Layout
+
 		
 \end_layout
 
 \begin_layout Plain Layout
+
 		cycles = 0;
 \end_layout
 
 \begin_layout Plain Layout
+
 		TBR = 1;	// interrupt wird ausgeloest bei 0
 \end_layout
 
 \begin_layout Plain Layout
+
 		
 \end_layout
 
 \begin_layout Plain Layout
+
 		// interrupt fuer timer freigeben
 \end_layout
 
 \begin_layout Plain Layout
+
 		BIT_SET(TBCCTL0, CCIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 	}
 \end_layout
 
 \begin_layout Plain Layout
+
 	
 \end_layout
 
@@ -928,6 +1061,7 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 	if (P1IFG & TASTE_RECHTS) {
 \end_layout
 
@@ -936,34 +1070,42 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 		// stoppe zeitmessung
 \end_layout
 
 \begin_layout Plain Layout
+
 		BIT_CLR(P1IFG, TASTE_RECHTS);
 \end_layout
 
 \begin_layout Plain Layout
+
 		
 \end_layout
 
 \begin_layout Plain Layout
+
 		// interrupt fuer timer stoppen
 \end_layout
 
 \begin_layout Plain Layout
+
 		BIT_CLR(TBCCTL0, CCIE);
 \end_layout
 
 \begin_layout Plain Layout
+
 		
 \end_layout
 
 \begin_layout Plain Layout
+
 		secs = cycles * 16 + tbr / 4096;
 \end_layout
 
 \begin_layout Plain Layout
+
 		centi_secs = (tbr % 4096) % 10;
 \end_layout
 
@@ -977,26 +1119,32 @@ __interrupt void PORT1(void)
 \end_layout
 
 \begin_layout Plain Layout
+
 		sprintf(buffer, "Zeit: %02d,%02d", secs, centi_secs);
 \end_layout
 
 \begin_layout Plain Layout
+
 		lcd_clear(WHITE);
 \end_layout
 
 \begin_layout Plain Layout
+
 		lcd_string(BLACK, 15, 25, buffer);	// Textausgabe
 \end_layout
 
 \begin_layout Plain Layout
+
 		lcd_paint();
 \end_layout
 
 \begin_layout Plain Layout
+
 	}
 \end_layout
 
 \begin_layout Plain Layout
+
 }
 \end_layout
 
@@ -1725,8 +1873,33 @@ Welche Batterienutzungsdauer wird für beide Blinkmodi erreicht, wenn eine
  Zu welchem Ergebnis kommen Sie?
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $ $
+\begin_layout Itemize
+Durchschnittlicher Verbrauch
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $\frac{3s\cdot100\,\mu A+1s\cdot5\, mA}{4s}=\frac{5,3\, mAs}{4s}=\underline{1,325\, mA}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Batterienutzungsdauer
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $\frac{1100\, mAh}{1,325\, mA}\approx\underline{830,189\, h\approx34,6\, d}$
 \end_inset
 
 
@@ -1741,22 +1914,68 @@ Machen Sie sich mit der Funktionsweise und der technischen Anwendung der
  Pulsweitenmodulation vertraut.
  Erklären Sie kurz die Funktionsweise der PWM-Ansteuerung für folgende technisch
 e Anwendungen:
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-• Motorsteuerung
-\begin_inset Newline newline
-\end_inset
+\begin_layout Itemize
+Motorsteuerung
+\end_layout
 
-• Ansteuerung bzw.
+\begin_deeper
+\begin_layout Standard
+Ein Motor lässt sich mit Hilfe von PWM insofern ansteuern, dass die mittlere
+ Spannung an dem Motor die Geschwindigkeit des Motors bestimmt.
+ D.h.
+ immer wenn das PWM Signal gesetzt ist, beschleunigt der Motor und wenn
+ es nicht gesetzt ist, wird der Motor durch Reibung wieder langsamer.
+ Je größer der Anteil der Zeit in der das PWM Signal gesetzt ist, desto
+ schneller dreht sich der Motor.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Ansteuerung bzw.
  Dimmen von LED
 \end_layout
 
+\begin_deeper
+\begin_layout Standard
+Beim Dimmen verhält es sich ähnlich.
+ Wenn Das PWM Signal gesetzt ist, fließt Strom, der die LED leuchten lässt.
+ Wenn das Signal nicht gesetzt ist, ist auch die LED aus.
+ D.h.
+ die LED flackert.
+ Ist nun die Frequenz dieses Flackerns groß genug, kann das menschliche
+ Auge das An- und Ausschalten der LED nicht mehr wahrnehmen und man sieht
+ nur noch die 
+\begin_inset Quotes eld
+\end_inset
+
+durchschnittliche
+\begin_inset Quotes erd
+\end_inset
+
+ Helligkeit der LED.
+ Die LED wirkt also immer dunkler, je länger die LED durchschnittlich von
+ dem PWM Signal ausgeschaltet wird.
+\end_layout
+
+\end_deeper
 \begin_layout Subsubsection
 Machen Sie sich mit dem Kapitel 12 aus dem MSP430 User's Guide vertraut.
  Schauen Sie sich insbesondere den Punkt 12.2.5 im MSP430 User's Guide an.
  Wählen Sie einen Ansteuerungsmode.
- 
+\end_layout
+
+\begin_layout Standard
+Wir wählen den count-up Modus, so dass der Timer wiederholt bis zum Wert
+ in dem Register TBCL0 zählt.
+ Als out-mode der Output-Unit wählen wir den Set/Reset Modus, was dazu führt,
+ dass das Ausgangssignal gesetzt wird, wenn der Timer den Wert in TBCLx
+ erreicht hat und zurückgesetzt wird, wenn der Timer den Wert in TBCL0 erreicht
+ hat.
+ Dies ermöglicht uns sowohl die Dauer in der das Ausgangssignal gesetzt
+ ist, als auch die Dauer in der das Ausgangssignal nicht gesetzt ist, variabel
+ festzulegen.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1789,6 +2008,126 @@ status open
 
 \begin_layout Plain Layout
 
+BIT_SET(P4SEL, BIT1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// waehle ACLK
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCTL, TBSSEL0);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(TBCTL, TBSSEL1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// setze divider auf 8
+\end_layout
+
+\begin_layout Plain Layout
+
+//BIT_SET(TBCTL, ID0 | ID1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// setze out-mode 011, set/reset mode
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCCTL1, OUTMOD0);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCCTL1, OUTMOD1);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(TBCCTL1, OUTMOD2);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// wahle count up mode
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_SET(TBCTL, MC0);
+\end_layout
+
+\begin_layout Plain Layout
+
+BIT_CLR(TBCTL, MC1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+TBCCR0 = 512;
+\end_layout
+
+\begin_layout Plain Layout
+
+TBCCR1 = 20;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+LPM3;
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+  while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+	}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+
+  
 \end_layout
 
 \end_inset
@@ -1796,5 +2135,51 @@ status open
 
 \end_layout
 
+\begin_layout Itemize
+Zeitbereiche für die Periodendauer
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+Maximalfrequenz der ACLK: 
+\begin_inset Formula $32000\, Hz$
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+Minimalfrequenz der ACLK: 
+\begin_inset Formula $4000\, Hz$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Daraus ergeben sich die Periodendauern:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $T_{min}=\frac{1}{32000\, Hz}=3,125\cdot10^{-5}\, s=\underline{31,25\,\mu s}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Wenn TBCCR1 gleich dem größten Wert der für TBCCR0 möglich ist, ergibt sich
+ die maximale Periodendauer:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $T_{max}=\frac{2^{16}-1}{4000\, Hz}=\underline{16,3835\, s}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
 \end_body
 \end_document
