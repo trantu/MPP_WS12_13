@@ -1,0 +1,2500 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Mikroprozessorpraktikum WS 12/13
+\end_layout
+
+\begin_layout Author
+Carlos Martín Nieto, Simon Hohberg, Tu Tran
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{section}{10}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Der 868MHz Transceiver CC1100
+\end_layout
+
+\begin_layout Subsection
+Der Transceiver CC1100 im Empfangsmode
+\end_layout
+
+\begin_layout Subsubsection
+Stellen Sie auf Basis der bereitgestellten Funktionen den Transceiver folgenderm
+aßen ein: 
+\end_layout
+
+\begin_layout Itemize
+Transceiver im Empfangsmode
+\end_layout
+
+\begin_layout Itemize
+ID und Frequenzkanal sind gleich der Nummer ihres Praktikumsarbeitsplatzes
+ (im Bereich von 1..10, steht am Labortisch)
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//=========================================================================
+\end_layout
+
+\begin_layout Plain Layout
+
+//=== Startprojekt zum Mikroprozessorpraktikum ============================
+\end_layout
+
+\begin_layout Plain Layout
+
+//=========================================================================
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "msp430x16x.h"  	// Systemdefinitionen für den MSP430F1612
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "init.h"			// Initialisierung des Mikrocontrollers
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "system.h"			// Systemfunktionen MSB430H
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "interrupts.h"		// ISR - Interrupt Service Routinen
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "HW_CC1100.h"		// CC1100 868MHz Funk Transceiver
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "HW_SHT11.h"		// SHT11 Feuchte- und Temperatursensor
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "HW_MMA7260Q.h"	// MMA7260Q 3D-Beschleunigungssensor
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "HW_LCD_TS.h"		// DOGM128 LCD Display Touchscreen
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "HW_LCD.h"			// DOGM128 LCD Display 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "stdio.h"			// Standard Libary 
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "string.h"			// Standard Libary 
+\end_layout
+
+\begin_layout Plain Layout
+
+#include "math.h"			// Standard Libary
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//#include "aufgabe_x.h"	// Header Datei für aufgabe_x.c 
+\end_layout
+
+\begin_layout Plain Layout
+
+							// möglichst eigene xxx.h und xxx.c Dateien
+\end_layout
+
+\begin_layout Plain Layout
+
+							// erstellen und verwenden.
+\end_layout
+
+\begin_layout Plain Layout
+
+main(void);					//Haupprogramm
+\end_layout
+
+\begin_layout Plain Layout
+
+void print_value(void);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_SET(a,b) ((a) |= (b))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_CLR(a,b) ((a) &= ~(b))
+\end_layout
+
+\begin_layout Plain Layout
+
+#define BIT_TOGGLE(a,b) ((a) ^= (b))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Hauptprogramm=======================================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+main(void)
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier sollten Variablen deklariert werden ============================
+\end_layout
+
+\begin_layout Plain Layout
+
+	//unsigned char i = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+	//char text[60];
+\end_layout
+
+\begin_layout Plain Layout
+
+	//int x,y;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die notwendigen Initialisierungsschritte =======================
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(1)== Port-Initialisierung ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_Port();				// Initialisierung der Port Register
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+//(2)=== Clock-System-Initialisierung ====================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== XT2() oder Dco() als Taktquelle einstellen
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== durch Ein- oder Auskommentieren
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== DCO ist bei LPM Einsatz bevorzugt muß zyklisch kalibriert werden
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== XT2 ist quarzstabil muß nicht zyklisch kalibriert werden
+\end_layout
+
+\begin_layout Plain Layout
+
+	//  			
+\end_layout
+
+\begin_layout Plain Layout
+
+	//XT2 ();					// XT2 Taktquelle aktivieren mit 7.3728MHz
+\end_layout
+
+\begin_layout Plain Layout
+
+	DCO ();					// Dco Taktquelle aktivieren mit 7.3728MHz
+\end_layout
+
+\begin_layout Plain Layout
+
+	//						   beachte DELTA
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(3)== Timer-Initialisierung= ==========================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_Timer_A();			// Init Timer für Sekundeninterrupt
+\end_layout
+
+\begin_layout Plain Layout
+
+							// !! noch leere Funktion
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(4)== USART-Initialisierung ===========================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_UART1();			// UART-RS232 mit 115.2kBit/s initialisieren
+\end_layout
+
+\begin_layout Plain Layout
+
+							// !! noch leere Funktion
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(5)== CC1100-Transceiver-Initialisierung ==============================
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_UART0_SPI();		// CC1100 SPI UART initalisieren
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_CC1100();			// CC1100 init und in RX Mode setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+							// !!!Interrupte sind ab jetzt freigegeben!!
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== Adresse und Funkkanal des Transceivers setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== für die Arbeitsplaetze HWPx (x=1...10) sollten
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== ID=x und channnel=x gesetzt werden
+\end_layout
+
+\begin_layout Plain Layout
+
+	ID = 8;							// Adresse 
+\end_layout
+
+\begin_layout Plain Layout
+
+	channel = 8; 					// Funkkanal  
+\end_layout
+
+\begin_layout Plain Layout
+
+	setUid(ID);						// Adresse im Transceiver setzen 
+\end_layout
+
+\begin_layout Plain Layout
+
+	switchFreq(channel);			// Funkkanal im Transceiver setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== Soll der Transceiver genutzt werden müssen folgende zwei Zeilen  
+\end_layout
+
+\begin_layout Plain Layout
+
+	//== auskommentiert werden: 
+\end_layout
+
+\begin_layout Plain Layout
+
+	/*init_CC1100_IDLE();		// CC1100 in den IDLE Mode setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+	init_CC1100_POWERDOWN();*/// CC1100 in den PowerDown Mode setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//=(6)== LCD-Display-Initialisierung =====================================
+\end_layout
+
+\begin_layout Plain Layout
+
+	dogm_reset();		// Hardware Reset des LCD Controllers
+\end_layout
+
+\begin_layout Plain Layout
+
+	dogm_init();		// Initialisierung der LCD Controller Register
+\end_layout
+
+\begin_layout Plain Layout
+
+	lcd_clear(WHITE);	// Grafikspeicher auf dem MSP430 löschen
+\end_layout
+
+\begin_layout Plain Layout
+
+	//lcd_string(BLACK, 15, 25, "MSP430-GESTARTET!");	// Textausgabe
+\end_layout
+
+\begin_layout Plain Layout
+
+	lcd_paint();		// Grafikspeicher auf das LCD Display ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ROT (0x01)   // 0 0 1 P4.0
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_GELB (0x02)  // 0 1 0 P4.1
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_GRUEN (0x04) // 1 0 0 P4.2
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ALL (LED_ROT | LED_GELB | LED_GRUEN)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_ON(led) (BIT_CLR(P4OUT, led)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_OFF(led) (BIT_SET(P4OUT, led)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#define LED_TOGGLE(led) (BIT_TOGGLE(P4OUT, led))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define IS_LED_ON(led) (!(P4OUT & led))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define TASTE_LINKS (0x1)
+\end_layout
+
+\begin_layout Plain Layout
+
+#define TASTE_RECHTS (0x2)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP_QUANTUM 10000
+\end_layout
+
+\begin_layout Plain Layout
+
+#define SLEEP(n) do { 		/* sleep for n seconds */ 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	long time = n * 100000; /* wait() sleeps 10*n microseconds */ 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	while(time > SLEEP_QUANTUM) { 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		wait(SLEEP_QUANTUM); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		time -= SLEEP_QUANTUM; 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	} 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	wait(time); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+} while(0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+while(1){
+\end_layout
+
+\begin_layout Plain Layout
+
+}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+
+}	// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+#pragma vector = PORT2_VECTOR	// ISR für den CC1100 Transceiver
+\end_layout
+
+\begin_layout Plain Layout
+
+__interrupt void PORT2 (void) {
+\end_layout
+
+\begin_layout Plain Layout
+
+	char res;						// CRC Check 
+\end_layout
+
+\begin_layout Plain Layout
+
+	int i = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+	char data[64];
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	if (P2IFG & 0x01)	// Check P2IFG Bit P2.0 - CC1100 Rx Packet
+\end_layout
+
+\begin_layout Plain Layout
+
+		{ 
+\end_layout
+
+\begin_layout Plain Layout
+
+		CLEAR(P2IFG, 0x01);
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+		res = receivePacket(); 	// CRC Rückgabe 
+\end_layout
+
+\begin_layout Plain Layout
+
+		if (res)				// wenn Paket OK ...
+\end_layout
+
+\begin_layout Plain Layout
+
+			{
+\end_layout
+
+\begin_layout Plain Layout
+
+				// kopiere daten
+\end_layout
+
+\begin_layout Plain Layout
+
+				for (i = 2; i < RxCC1100.length; i++)
+\end_layout
+
+\begin_layout Plain Layout
+
+				{
+\end_layout
+
+\begin_layout Plain Layout
+
+					data[i-2] = RxCC1100.data[i];
+\end_layout
+
+\begin_layout Plain Layout
+
+				}
+\end_layout
+
+\begin_layout Plain Layout
+
+				data[i-2] = 0x00;
+\end_layout
+
+\begin_layout Plain Layout
+
+				
+\end_layout
+
+\begin_layout Plain Layout
+
+				// receiver
+\end_layout
+
+\begin_layout Plain Layout
+
+				printPacket(0); // 0 - Paket auf LCD ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+
+								// 1 - Paket auf UART1 ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+
+				
+\end_layout
+
+\begin_layout Plain Layout
+
+				lcd_clear(WHITE);	// Grafikspeicher auf dem MSP430 löschen
+\end_layout
+
+\begin_layout Plain Layout
+
+				lcd_string(BLACK, 2, 2, data);	// Textausgabe
+\end_layout
+
+\begin_layout Plain Layout
+
+				lcd_paint();		// Grafikspeicher auf das LCD Display ausgeben					
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		else
+\end_layout
+
+\begin_layout Plain Layout
+
+			{	
+\end_layout
+
+\begin_layout Plain Layout
+
+				spiStrobe(CC1100_SIDLE); 	// Switch to IDLE
+\end_layout
+
+\begin_layout Plain Layout
+
+				spiStrobe(CC1100_SFRX);	 	// Flush the RX FIFO
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}	
+\end_layout
+
+\begin_layout Plain Layout
+
+	else
+\end_layout
+
+\begin_layout Plain Layout
+
+		{
+\end_layout
+
+\begin_layout Plain Layout
+
+		CLEAR(P2IFG, 0xFF);			 	// Clear all flags
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	spiStrobe(CC1100_SRX);			 	// Switch to RX Mode
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Zunächst haben wir ID = 8 und Channel = 8 gesetzt.
+ Danach haben wir außerdem ID = 2 und ID = 3 getestet, aber keine Pakete
+ erhalten.
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Erhaltene Paket für ID = 8, Channel = 8:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+Quelladresse= 18
+\end_layout
+
+\begin_layout Plain Layout
+Zieladresse = 8
+\end_layout
+
+\begin_layout Plain Layout
+RSSI = 64
+\end_layout
+
+\begin_layout Plain Layout
+Paketlänge = 13
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+Datenpaket = Hallo HWP08
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+Quelladresse= 18
+\end_layout
+
+\begin_layout Plain Layout
+Zieladresse = 8
+\end_layout
+
+\begin_layout Plain Layout
+RSSI = 54
+\end_layout
+
+\begin_layout Plain Layout
+Paketlänge = 13
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+Datenpaket = Hallo HWP08
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+Quelladresse= 18
+\end_layout
+
+\begin_layout Plain Layout
+Zieladresse = 8
+\end_layout
+
+\begin_layout Plain Layout
+RSSI = 54
+\end_layout
+
+\begin_layout Plain Layout
+Paketlänge = 13
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+Datenpaket = Hallo HWP08
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+Quelladresse= 18
+\end_layout
+
+\begin_layout Plain Layout
+Zieladresse = 8
+\end_layout
+
+\begin_layout Plain Layout
+RSSI = 59
+\end_layout
+
+\begin_layout Plain Layout
+Paketlänge = 13
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Der Transceiver CC1100 im Sendemode
+\end_layout
+
+\begin_layout Standard
+In dieser Aufgabe sollen Sensordaten per Funk zwischen zwei Systemen übertragen
+ werden.
+ Entwickeln Sie eine Lösung für zwei MSB430H-Boards, eins als Sender und
+ das andere als Empfänger, die folgende Funktionalität für den entsprechenden
+ MSB430H bereitstellt:
+\end_layout
+
+\begin_layout Subsubsection
+Für den Sender:
+\end_layout
+
+\begin_layout Itemize
+Transceiver in den Empfangsmode setzen
+\end_layout
+
+\begin_layout Itemize
+Initialisierung Funkkanal entsprechend des Arbeitsplatzes
+\end_layout
+
+\begin_layout Itemize
+Initialisierung auf ID = Arbeitsplatznummer + 10
+\end_layout
+
+\begin_layout Itemize
+Per Funk an den Empfänger alle 5 Sekunden Sensordaten übertragen Sensordatenform
+at: <T><HT><RH><HT><ax><HT><ay><HT><az><HT><TA><CR><LF>
+\end_layout
+
+\begin_layout Itemize
+Vor dem Senden des Datenpaketes rote LED (P5.7) ein Wird der Erhalt des Datenpake
+tes bestätigt rote LED (P5.7) aus 
+\end_layout
+
+\begin_layout Standard
+Lösung siehe 1.2.2!
+\end_layout
+
+\begin_layout Subsubsection
+Für den Empfänger:
+\end_layout
+
+\begin_layout Itemize
+Transceiver in den Empfangsmode setzen
+\end_layout
+
+\begin_layout Itemize
+Initialisierung Funkkanal entsprechend des Arbeitsplatzes
+\end_layout
+
+\begin_layout Itemize
+Initialisierung auf ID = Arbeitsplatznummer
+\end_layout
+
+\begin_layout Itemize
+Empfangenes Datenpaket auf die serielle Schnittstelle ausgeben
+\end_layout
+
+\begin_layout Itemize
+Ausgabeformat der Zeichenkette: <T><HT><RH><HT><ax><HT><ay><HT><az><HT><TA><CR><
+LF>
+\end_layout
+
+\begin_layout Itemize
+Bei TA = 2 grüne LED (P4.2) an
+\end_layout
+
+\begin_layout Itemize
+Bei TA = 1 grüne LED (P4.2) aus
+\end_layout
+
+\begin_layout Itemize
+Bei jedem Datenpaket gelbe LED (P4.1) toggeln
+\end_layout
+
+\begin_layout Itemize
+Bei Beschleunigungsdifferenzen größer 20% zum vorhergehenden Wert (in mindestens
+ einer Achse) rote LED (P4.0) an, sonst aus
+\end_layout
+
+\begin_layout Itemize
+Jedes empfangene Datenpaket per Funk bestätigen
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "basicstyle={\footnotesize},breaklines=true,frame=single,language=C,numbers=left,tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//=========================================================================
+\end_layout
+
+\begin_layout Plain Layout
+//=== Startprojekt zum Mikroprozessorpraktikum ============================
+\end_layout
+
+\begin_layout Plain Layout
+//=========================================================================
+\end_layout
+
+\begin_layout Plain Layout
+#include "msp430x16x.h"  	// Systemdefinitionen für den MSP430F1612
+\end_layout
+
+\begin_layout Plain Layout
+#include "init.h"			// Initialisierung des Mikrocontrollers
+\end_layout
+
+\begin_layout Plain Layout
+#include "system.h"			// Systemfunktionen MSB430H
+\end_layout
+
+\begin_layout Plain Layout
+#include "interrupts.h"		// ISR - Interrupt Service Routinen
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#include "HW_CC1100.h"		// CC1100 868MHz Funk Transceiver
+\end_layout
+
+\begin_layout Plain Layout
+#include "HW_SHT11.h"		// SHT11 Feuchte- und Temperatursensor
+\end_layout
+
+\begin_layout Plain Layout
+#include "HW_MMA7260Q.h"	// MMA7260Q 3D-Beschleunigungssensor
+\end_layout
+
+\begin_layout Plain Layout
+#include "HW_LCD_TS.h"		// DOGM128 LCD Display Touchscreen
+\end_layout
+
+\begin_layout Plain Layout
+#include "HW_LCD.h"			// DOGM128 LCD Display 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#include "stdio.h"			// Standard Libary 
+\end_layout
+
+\begin_layout Plain Layout
+#include "string.h"			// Standard Libary 
+\end_layout
+
+\begin_layout Plain Layout
+#include "math.h"			// Standard Libary
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//#include "aufgabe_x.h"	// Header Datei für aufgabe_x.c 
+\end_layout
+
+\begin_layout Plain Layout
+							// möglichst eigene xxx.h und xxx.c Dateien
+\end_layout
+
+\begin_layout Plain Layout
+							// erstellen und verwenden.
+\end_layout
+
+\begin_layout Plain Layout
+main(void);					//Haupprogramm
+\end_layout
+
+\begin_layout Plain Layout
+void print_value(void);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+mode_t mode;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+unsigned char secs = 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#define BIT_SET(a,b) ((a) |= (b))
+\end_layout
+
+\begin_layout Plain Layout
+#define BIT_CLR(a,b) ((a) &= ~(b))
+\end_layout
+
+\begin_layout Plain Layout
+#define BIT_TOGGLE(a,b) ((a) ^= (b))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//====Hauptprogramm=======================================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+main(void)
+\end_layout
+
+\begin_layout Plain Layout
+	{
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+	mode = RECEIVER;
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+//===Hier sollten Variablen deklariert werden ============================
+\end_layout
+
+\begin_layout Plain Layout
+	//unsigned char i = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	//char text[60];
+\end_layout
+
+\begin_layout Plain Layout
+	//int x,y;
+\end_layout
+
+\begin_layout Plain Layout
+	
+\end_layout
+
+\begin_layout Plain Layout
+//===Hier die notwendigen Initialisierungsschritte =======================
+\end_layout
+
+\begin_layout Plain Layout
+//=(1)== Port-Initialisierung ============================================
+\end_layout
+
+\begin_layout Plain Layout
+	init_Port();				// Initialisierung der Port Register
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+//(2)=== Clock-System-Initialisierung ====================================
+\end_layout
+
+\begin_layout Plain Layout
+	//== XT2() oder Dco() als Taktquelle einstellen
+\end_layout
+
+\begin_layout Plain Layout
+	//== durch Ein- oder Auskommentieren
+\end_layout
+
+\begin_layout Plain Layout
+	//== DCO ist bei LPM Einsatz bevorzugt muß zyklisch kalibriert werden
+\end_layout
+
+\begin_layout Plain Layout
+	//== XT2 ist quarzstabil muß nicht zyklisch kalibriert werden
+\end_layout
+
+\begin_layout Plain Layout
+	//  			
+\end_layout
+
+\begin_layout Plain Layout
+	//XT2 ();					// XT2 Taktquelle aktivieren mit 7.3728MHz
+\end_layout
+
+\begin_layout Plain Layout
+	DCO ();					// Dco Taktquelle aktivieren mit 7.3728MHz
+\end_layout
+
+\begin_layout Plain Layout
+	//						   beachte DELTA
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+//=(3)== Timer-Initialisierung= ==========================================
+\end_layout
+
+\begin_layout Plain Layout
+	init_Timer_A();			// Init Timer für Sekundeninterrupt
+\end_layout
+
+\begin_layout Plain Layout
+							// !! noch leere Funktion
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//=(4)== USART-Initialisierung ===========================================
+\end_layout
+
+\begin_layout Plain Layout
+	init_UART1();			// UART-RS232 mit 115.2kBit/s initialisieren
+\end_layout
+
+\begin_layout Plain Layout
+							// !! noch leere Funktion
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//=(5)== CC1100-Transceiver-Initialisierung ==============================
+\end_layout
+
+\begin_layout Plain Layout
+	init_UART0_SPI();		// CC1100 SPI UART initalisieren
+\end_layout
+
+\begin_layout Plain Layout
+	init_CC1100();			// CC1100 init und in RX Mode setzen
+\end_layout
+
+\begin_layout Plain Layout
+							// !!!Interrupte sind ab jetzt freigegeben!!
+\end_layout
+
+\begin_layout Plain Layout
+	//== Adresse und Funkkanal des Transceivers setzen
+\end_layout
+
+\begin_layout Plain Layout
+	//== für die Arbeitsplaetze HWPx (x=1...10) sollten
+\end_layout
+
+\begin_layout Plain Layout
+	//== ID=x und channnel=x gesetzt werden
+\end_layout
+
+\begin_layout Plain Layout
+	if (SENDER == mode) {
+\end_layout
+
+\begin_layout Plain Layout
+		ID = 18;						// Adresse
+\end_layout
+
+\begin_layout Plain Layout
+		channel = 8; 					// Funkkanal
+\end_layout
+
+\begin_layout Plain Layout
+	} else {
+\end_layout
+
+\begin_layout Plain Layout
+		ID = 8;							// Adresse 
+\end_layout
+
+\begin_layout Plain Layout
+		channel = 8; 					// Funkkanal  
+\end_layout
+
+\begin_layout Plain Layout
+	} 
+\end_layout
+
+\begin_layout Plain Layout
+	setUid(ID);						// Adresse im Transceiver setzen 
+\end_layout
+
+\begin_layout Plain Layout
+	switchFreq(channel);			// Funkkanal im Transceiver setzen
+\end_layout
+
+\begin_layout Plain Layout
+	//== Soll der Transceiver genutzt werden müssen folgende zwei Zeilen  
+\end_layout
+
+\begin_layout Plain Layout
+	//== auskommentiert werden: 
+\end_layout
+
+\begin_layout Plain Layout
+	/*init_CC1100_IDLE();		// CC1100 in den IDLE Mode setzen
+\end_layout
+
+\begin_layout Plain Layout
+	init_CC1100_POWERDOWN();*/// CC1100 in den PowerDown Mode setzen
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//=(6)== LCD-Display-Initialisierung =====================================
+\end_layout
+
+\begin_layout Plain Layout
+	dogm_reset();		// Hardware Reset des LCD Controllers
+\end_layout
+
+\begin_layout Plain Layout
+	dogm_init();		// Initialisierung der LCD Controller Register
+\end_layout
+
+\begin_layout Plain Layout
+	lcd_clear(WHITE);	// Grafikspeicher auf dem MSP430 löschen
+\end_layout
+
+\begin_layout Plain Layout
+	//lcd_string(BLACK, 15, 25, "MSP430-GESTARTET!");	// Textausgabe
+\end_layout
+
+\begin_layout Plain Layout
+	lcd_paint();		// Grafikspeicher auf das LCD Display ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#define LED_ROT (0x01)   // 0 0 1 P4.0
+\end_layout
+
+\begin_layout Plain Layout
+#define LED_GELB (0x02)  // 0 1 0 P4.1
+\end_layout
+
+\begin_layout Plain Layout
+#define LED_GRUEN (0x04) // 1 0 0 P4.2
+\end_layout
+
+\begin_layout Plain Layout
+#define LED_ALL (LED_ROT | LED_GELB | LED_GRUEN)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#define LED_ON(led) (BIT_CLR(P4OUT, led)) 
+\end_layout
+
+\begin_layout Plain Layout
+#define LED_OFF(led) (BIT_SET(P4OUT, led)) 
+\end_layout
+
+\begin_layout Plain Layout
+#define LED_TOGGLE(led) (BIT_TOGGLE(P4OUT, led))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#define IS_LED_ON(led) (!(P4OUT & led))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#define TASTE_LINKS (0x1)
+\end_layout
+
+\begin_layout Plain Layout
+#define TASTE_RECHTS (0x2)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#define SLEEP_QUANTUM 10000
+\end_layout
+
+\begin_layout Plain Layout
+#define SLEEP(n) do { 		/* sleep for n seconds */ 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+	long time = n * 100000; /* wait() sleeps 10*n microseconds */ 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+	while(time > SLEEP_QUANTUM) { 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+		wait(SLEEP_QUANTUM); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+		time -= SLEEP_QUANTUM; 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+	} 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+	wait(time); 
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+} while(0)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+	if (SENDER == mode) {
+\end_layout
+
+\begin_layout Plain Layout
+		// interrupt wird bei 0 ausgeloest
+\end_layout
+
+\begin_layout Plain Layout
+		TBR = 1;
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// waehle ACLK
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_SET(TBCTL, TBSSEL0);
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(TBCTL, TBSSEL1);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// setze divider auf 8
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_SET(TBCTL, ID0 | ID1);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// wahle count up mode
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_SET(TBCTL, MC0);
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(TBCTL, MC1);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// setze taktanzahl fuer eine sekunde
+\end_layout
+
+\begin_layout Plain Layout
+		TBCCR0 = 0x1000;
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// loesche interrupt flag fuer timer
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(TBCCTL0, CCIFG);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// AD Wandler Konfiguration
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// setze Pin 5.4, 5.5, 5.6 als output
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_SET(P5DIR, BIT4 + BIT5 + BIT6);
+\end_layout
+
+\begin_layout Plain Layout
+		// Beschleunigungssensor g-Range 1.5g, Sensitivity 800mV/g
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(P5OUT, BIT4);
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(P5OUT, BIT5);
+\end_layout
+
+\begin_layout Plain Layout
+		// sleep mode off
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_SET(P5OUT, BIT6);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// waehle P6.0, P6.1, P6.2 als input
+\end_layout
+
+\begin_layout Plain Layout
+		P6SEL = BIT0 + BIT1 + BIT2;
+\end_layout
+
+\begin_layout Plain Layout
+		// schalte wandler an, waehle "multiple sample and conversion", SHT =
+ 0 -> 4 cycles
+\end_layout
+
+\begin_layout Plain Layout
+		ADC12CTL0 = ADC12ON + MSC;
+\end_layout
+
+\begin_layout Plain Layout
+		// ADC12 clock, sequence of channels
+\end_layout
+
+\begin_layout Plain Layout
+		ADC12CTL1 = CONSEQ0 + SHP;
+\end_layout
+
+\begin_layout Plain Layout
+		// waehle channel A0, A1, A2
+\end_layout
+
+\begin_layout Plain Layout
+		ADC12MCTL0 = INCH_0;
+\end_layout
+
+\begin_layout Plain Layout
+		ADC12MCTL1 = INCH_1;
+\end_layout
+
+\begin_layout Plain Layout
+		ADC12MCTL2 = INCH_2 + EOS;
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// loesche interrupt flag
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(ADC12IFG, BIT2);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// erlaube interrupt
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_SET(ADC12IE, BIT2);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// erlaube timer interrupt
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_SET(TBCCTL0, CCIE);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// erlaube conversion
+\end_layout
+
+\begin_layout Plain Layout
+		ADC12CTL0 |= ENC;
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+	
+\end_layout
+
+\begin_layout Plain Layout
+	LED_OFF(LED_ALL);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+	_bis_SR_register(GIE);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+//===Hier die Endlosschleife quasi das Betriebssystem=====================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+while(1){
+\end_layout
+
+\begin_layout Plain Layout
+}	// Ende der Endlosschleife
+\end_layout
+
+\begin_layout Plain Layout
+}	// Ende Main
+\end_layout
+
+\begin_layout Plain Layout
+//====Ende des Hauptprogramms ============================================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = TIMERB0_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void TIMERB0(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	secs++;
+\end_layout
+
+\begin_layout Plain Layout
+	if (5 == secs) {
+\end_layout
+
+\begin_layout Plain Layout
+		// starte conversion
+\end_layout
+
+\begin_layout Plain Layout
+		ADC12CTL0 |= ADC12SC;
+\end_layout
+
+\begin_layout Plain Layout
+	}
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = ADC12_VECTOR
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void ADC12(void)
+\end_layout
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\begin_layout Plain Layout
+	char buffer[64];
+\end_layout
+
+\begin_layout Plain Layout
+	int tasten_status = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	int x, y, z;
+\end_layout
+
+\begin_layout Plain Layout
+	if (ADC12IFG & BIT2)
+\end_layout
+
+\begin_layout Plain Layout
+	{
+\end_layout
+
+\begin_layout Plain Layout
+		// Beschleunigungsdaten
+\end_layout
+
+\begin_layout Plain Layout
+		x = ADC12MEM0;
+\end_layout
+
+\begin_layout Plain Layout
+		y = ADC12MEM1;
+\end_layout
+
+\begin_layout Plain Layout
+		z = ADC12MEM2;
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		BIT_CLR(ADC12IFG, BIT2 + BIT1 + BIT0);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// tasten status
+\end_layout
+
+\begin_layout Plain Layout
+		if (P1IN & TASTE_RECHTS) {
+\end_layout
+
+\begin_layout Plain Layout
+			tasten_status += 1;
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+		if (P1IN & TASTE_LINKS) {
+\end_layout
+
+\begin_layout Plain Layout
+			tasten_status += 2;
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// sensor lesen
+\end_layout
+
+\begin_layout Plain Layout
+		SHT11_Read_Sensor();
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		sprintf(buffer, "%s
+\backslash
+t%s
+\backslash
+t%d
+\backslash
+t%d
+\backslash
+t%d
+\backslash
+t%d
+\backslash
+r
+\backslash
+n", temp_char, humi_char, x, y, z, tasten_status);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		// rote LED an
+\end_layout
+
+\begin_layout Plain Layout
+		LEDON;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+		// sende string terminierung mit
+\end_layout
+
+\begin_layout Plain Layout
+		sendPacket(8, 18, buffer, strlen(buffer)+1);
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		secs = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	}	
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+#pragma vector = PORT2_VECTOR	// ISR für den CC1100 Transceiver
+\end_layout
+
+\begin_layout Plain Layout
+__interrupt void PORT2 (void) {
+\end_layout
+
+\begin_layout Plain Layout
+	char res;						// CRC Check 
+\end_layout
+
+\begin_layout Plain Layout
+	int tasten_status = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	int x, y, z;
+\end_layout
+
+\begin_layout Plain Layout
+	static int last_x = 0, last_y = 0, last_z = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	char temp[16];
+\end_layout
+
+\begin_layout Plain Layout
+	char humi[16];
+\end_layout
+
+\begin_layout Plain Layout
+	char data[64];
+\end_layout
+
+\begin_layout Plain Layout
+	char ack[] = "ACK";
+\end_layout
+
+\begin_layout Plain Layout
+	int i = 0;
+\end_layout
+
+\begin_layout Plain Layout
+	float x_dif;
+\end_layout
+
+\begin_layout Plain Layout
+	float y_dif;
+\end_layout
+
+\begin_layout Plain Layout
+	float z_dif;
+\end_layout
+
+\begin_layout Plain Layout
+	
+\end_layout
+
+\begin_layout Plain Layout
+	if (P2IFG & 0x01)	// Check P2IFG Bit P2.0 - CC1100 Rx Packet
+\end_layout
+
+\begin_layout Plain Layout
+		{ 
+\end_layout
+
+\begin_layout Plain Layout
+		CLEAR(P2IFG, 0x01);
+\end_layout
+
+\begin_layout Plain Layout
+		if (RECEIVER == mode) {
+\end_layout
+
+\begin_layout Plain Layout
+			LED_TOGGLE(LED_GELB);
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+		
+\end_layout
+
+\begin_layout Plain Layout
+		res = receivePacket(); 	// CRC Rückgabe 
+\end_layout
+
+\begin_layout Plain Layout
+		if (res)				// wenn Paket OK ...
+\end_layout
+
+\begin_layout Plain Layout
+			{
+\end_layout
+
+\begin_layout Plain Layout
+				// kopiere daten
+\end_layout
+
+\begin_layout Plain Layout
+				for (i = 2; i < RxCC1100.length; i++)
+\end_layout
+
+\begin_layout Plain Layout
+				{
+\end_layout
+
+\begin_layout Plain Layout
+					data[i-2] = RxCC1100.data[i];
+\end_layout
+
+\begin_layout Plain Layout
+				}
+\end_layout
+
+\begin_layout Plain Layout
+				data[i-2] = 0x00;
+\end_layout
+
+\begin_layout Plain Layout
+				
+\end_layout
+
+\begin_layout Plain Layout
+				if (RECEIVER == mode) {
+\end_layout
+
+\begin_layout Plain Layout
+					// receiver
+\end_layout
+
+\begin_layout Plain Layout
+					printPacket(1); // 0 - Paket auf LCD ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+									// 1 - Paket auf UART1 ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+									
+\end_layout
+
+\begin_layout Plain Layout
+					sendPacket(18, 8, ack, strlen(ack)+1);
+\end_layout
+
+\begin_layout Plain Layout
+					
+\end_layout
+
+\begin_layout Plain Layout
+					// parse paket
+\end_layout
+
+\begin_layout Plain Layout
+					sscanf(data, "T= %s
+\backslash
+t%s
+\backslash
+t%d
+\backslash
+t%d
+\backslash
+t%d
+\backslash
+t%d
+\backslash
+r
+\backslash
+n", temp, humi, &x, &y, &z, &tasten_status);
+\end_layout
+
+\begin_layout Plain Layout
+					
+\end_layout
+
+\begin_layout Plain Layout
+					lcd_clear(WHITE);	// Grafikspeicher auf dem MSP430 löschen
+\end_layout
+
+\begin_layout Plain Layout
+					lcd_string(BLACK, 2, 2, data);	// Textausgabe
+\end_layout
+
+\begin_layout Plain Layout
+					lcd_paint();		// Grafikspeicher auf das LCD Display ausgeben
+\end_layout
+
+\begin_layout Plain Layout
+					
+\end_layout
+
+\begin_layout Plain Layout
+					// ueberpruefe tasten status
+\end_layout
+
+\begin_layout Plain Layout
+					if (2 == tasten_status) {
+\end_layout
+
+\begin_layout Plain Layout
+						LED_ON(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+					} else if (1 == tasten_status) {
+\end_layout
+
+\begin_layout Plain Layout
+						LED_OFF(LED_GRUEN);
+\end_layout
+
+\begin_layout Plain Layout
+					}
+\end_layout
+
+\begin_layout Plain Layout
+					
+\end_layout
+
+\begin_layout Plain Layout
+					x_dif = fabs(((float)x/(float)last_x) - 1);
+\end_layout
+
+\begin_layout Plain Layout
+					y_dif = fabs(((float)y/(float)last_y) - 1);
+\end_layout
+
+\begin_layout Plain Layout
+					z_dif = fabs(((float)z/(float)last_z) - 1);
+\end_layout
+
+\begin_layout Plain Layout
+					if ((x_dif > 0.2) || (y_dif > 0.2) || (z_dif > 0.2)) {
+\end_layout
+
+\begin_layout Plain Layout
+						LED_ON(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+					} else {
+\end_layout
+
+\begin_layout Plain Layout
+						LED_OFF(LED_ROT);
+\end_layout
+
+\begin_layout Plain Layout
+					}
+\end_layout
+
+\begin_layout Plain Layout
+					
+\end_layout
+
+\begin_layout Plain Layout
+					last_x = x;
+\end_layout
+
+\begin_layout Plain Layout
+					last_y = y;
+\end_layout
+
+\begin_layout Plain Layout
+					last_z = z;
+\end_layout
+
+\begin_layout Plain Layout
+					
+\end_layout
+
+\begin_layout Plain Layout
+				} else {
+\end_layout
+
+\begin_layout Plain Layout
+					// sender
+\end_layout
+
+\begin_layout Plain Layout
+					// ueberpruefe laenge (src byte + dst byte + laenge von ack + 
+\backslash
+0)
+\end_layout
+
+\begin_layout Plain Layout
+					if (strlen(ack)+3 == RxCC1100.length) {
+\end_layout
+
+\begin_layout Plain Layout
+						if (!memcmp(data, ack, strlen(ack))) {
+\end_layout
+
+\begin_layout Plain Layout
+							// rote LED an
+\end_layout
+
+\begin_layout Plain Layout
+							LEDOFF;
+\end_layout
+
+\begin_layout Plain Layout
+						}
+\end_layout
+
+\begin_layout Plain Layout
+					}
+\end_layout
+
+\begin_layout Plain Layout
+				}
+\end_layout
+
+\begin_layout Plain Layout
+			}
+\end_layout
+
+\begin_layout Plain Layout
+		else
+\end_layout
+
+\begin_layout Plain Layout
+			{	
+\end_layout
+
+\begin_layout Plain Layout
+				spiStrobe(CC1100_SIDLE); 	// Switch to IDLE
+\end_layout
+
+\begin_layout Plain Layout
+				spiStrobe(CC1100_SFRX);	 	// Flush the RX FIFO
+\end_layout
+
+\begin_layout Plain Layout
+			}
+\end_layout
+
+\begin_layout Plain Layout
+		}	
+\end_layout
+
+\begin_layout Plain Layout
+	else
+\end_layout
+
+\begin_layout Plain Layout
+		{
+\end_layout
+
+\begin_layout Plain Layout
+		CLEAR(P2IFG, 0xFF);			 	// Clear all flags
+\end_layout
+
+\begin_layout Plain Layout
+		}
+\end_layout
+
+\begin_layout Plain Layout
+	spiStrobe(CC1100_SRX);			 	// Switch to RX Mode
+\end_layout
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
